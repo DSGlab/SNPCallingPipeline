@@ -8,6 +8,9 @@ import java.util.Scanner;
  *
  * This object reads a VCF file and records every variant line
  * as a VCFVariant object.
+ *
+ * @author julio.diaz@mail.utoronto.ca
+ *
  */
 public class VCFHolder {
     private ArrayList<VCFVariant> variants;

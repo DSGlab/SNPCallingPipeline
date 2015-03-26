@@ -3,128 +3,17 @@ import JavaBrew.FastaPrinter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Scanner;
 
 /**
  * Modified by juliofdiaz on 11/11/14.
  *
  *
+ * @author julio.diaz@mail.utoronto.ca
+ *
  */
 public class VCFHolderMap {
     public static void main(String[] args) throws Exception {
 
-        //ArrayList<String> verified = getVerifiedSNPs();
-
-        //ArrayList<String> idList = getIds();
-
-        /* Loops through each isolate */
-        //for (String idS : idList) {
-        String idS = "1";
-            System.out.println("isolate "+idS);
-            //PrintWriter out = new PrintWriter("/home/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71-INDEL/"+idS+"-variants_4.txt" );
-
-            File file = new File("/Users/juliofdiaz/Dropbox/CF/references/C71.fa");
-            FastaPrinter ref = new FastaPrinter(file);
-
-
-        String[] varFiles = { "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/BWA-"+idS+"/r.vcf",
-                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/BWA-COR_"+idS+"/r.vcf",
-                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/LAST-"+idS+"/r.vcf",
-                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/LAST-COR_"+idS+"/r.vcf",
-                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/NOVOALIGN-"+idS+"/r.vcf",
-                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/NOVOALIGN-COR_"+idS+"/r.vcf" };
-
-
-
-
-
-            LinkedHashMap<String, ArrayList<VCFVariant>> main = getVariantsMap( varFiles );
-
-
-            // Here we filter out the variants whose quality is lower than threshold
-            main = qualityFilterVariantsMap(main, 30);
-
-            // Here we filter out the variants whose sequencing depth is lower than threshold
-            main = qualityDepthFilterVariantsMap(main, 20);
-
-            // Here we filter out the variants that are closer to the contig ends than threshold
-            main = contigEndFilterVariantsMap(main, ref, 250);
-
-            // Here we filter out the variants that are covered unevenly by the forward and reverse reads
-            main = readBalanceFilterVariantsMap(main, 5);
-
-            // Here we filter out the variants that are covered by the
-            main = refToAltRatioFilterVariantsMap(main, 0.2);
-
-
-            LinkedHashMap<String, ArrayList<VCFVariant>> clusterFiltered = clusterFilterVariantsMap(main, 15);
-
-            /* Loops through each position that reports a variant */
-            for (String key : main.keySet()) {
-
-                /* Ensures that position actually reports variant. IOW, variants were not pruned by filtering steps */
-                if (main.get(key).size() != 0) {
-
-                    /* Filters out positions reporting variants where the reference includes "N" */
-                    if (!main.get(key).get(0).isReferenceN()) {
-
-                        /* Filters in/out indels */
-                        if (main.get(key).get(0).isIndel()) {
-                            if ( main.get(key).size() >= 4 ) {
-                            /* THIS IS TO EXTEND SNP LIST
-                            System.out.print(key + "\t");
-                            if (reftoAltRatioFiltered.keySet().contains(key)) {
-                                System.out.print("REFALT_PASS");
-                            }
-                            System.out.print("\t");
-                            if (clusterFiltered.keySet().contains(key)) {
-                                System.out.print("CLUSTER_PASS");
-                            }
-                            System.out.print("\t");
-
-                            System.out.print(main.get(key).get(0).getReference() + "\t");
-                            System.out.print(main.get(key).get(0).getAlternative() + "\t");
-                            System.out.print(main.get(key).get(0).getReferenceToAlternativeRatio() + "\t");
-                            System.out.print(main.get(key).size() + "\t");
-                            System.out.println();
-                            */
-
-                                //ArrayList<String> tmpList = new ArrayList<String>();
-                                //for ( VCFVariant var : main.get(key)) {
-                                //    tmpList.add( var.getAlternative() );
-                                //}
-
-                                /*  */
-                                //if ( isAllSame(tmpList) ) {
-                                System.out.print(key + "\t");
-                                System.out.print(main.get(key).get(0).getReference() + "\t");
-                                System.out.print(main.get(key).get(0).getAlternative() + "\t");
-                                System.out.print(main.get(key).get(0).getReferenceToAlternativeRatio() + "\t");
-                                System.out.print(main.get(key).size() + "\t");
-                                System.out.println();
-                                //}
-
-
-                            }
-                        }
-                    }
-                }
-            }
-            System.out.println( );
-        //}
-    }
-
-
-    private static Boolean isAllSame ( ArrayList<String> list ){
-        String prev = list.get(0);
-
-        for ( int i=1; i<list.size(); i++ ) {
-            if ( list.get(i).equals( prev ) ) {
-                return true;
-            }
-            prev = list.get( i );
-        }
-        return false;
     }
 
     /**
@@ -363,7 +252,7 @@ public class VCFHolderMap {
      *         variant.
      * @throws Exception is thrown if any of the files is not found
      */
-    private static LinkedHashMap<String,ArrayList<VCFVariant>> getVariantsMap ( String... variantFiles )
+    public static LinkedHashMap<String,ArrayList<VCFVariant>> getVariantsMap ( String... variantFiles )
             throws Exception{
         LinkedHashMap<String, ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
         ArrayList<VCFHolder> holders  = getVcfHolders( variantFiles );
@@ -372,11 +261,11 @@ public class VCFHolderMap {
             ArrayList<VCFVariant> vv = v.getVariants();
             for ( VCFVariant var : vv ) {
                 if ( result.keySet().contains( var.getChromosome()+"-"+var.getPosition() ) ) {
-                    result.get( var.getChromosome()+"-"+var.getPosition() ).add( var );
+                    result.get( var.getChromosome()+"-"+var.getPosition() ).add(var);
                 }else{
                     ArrayList<VCFVariant> temp = new ArrayList<VCFVariant>();
                     temp.add( var );
-                    result.put( var.getChromosome()+"-"+var.getPosition(), temp );
+                    result.put(var.getChromosome() + "-" + var.getPosition(), temp);
                 }
             }
         }
@@ -404,25 +293,6 @@ public class VCFHolderMap {
         }
 
         return vcfHolders;
-    }
-
-
-
-    private static ArrayList<String> getIds () {
-        ArrayList<String> result = new ArrayList<String>();
-        File f = new File("/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71");
-
-        for ( File cur : f.listFiles() ) {
-            if ( cur.isDirectory() ) {
-                String tempo = cur.getName().split("-")[1].split("_")[0];
-                if( !tempo.equals( "COR" ) ) {
-                    if ( !result.contains(tempo) ) {
-                        result.add( tempo );
-                    }
-                }
-            }
-        }
-        return result;
     }
 
 }

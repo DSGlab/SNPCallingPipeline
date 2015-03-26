@@ -9,6 +9,8 @@ import java.util.List;
  * This object acquires the data from each variant in a VCF file. The vcf
  * file will be read by VCFHolder and each line become this object.
  *
+ * @author julio.diaz@mail.utoronto.ca
+ *
  */
 public class VCFVariant {
     private String chromosome;

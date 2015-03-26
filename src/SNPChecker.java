@@ -23,6 +23,13 @@ public class SNPChecker {
         }
     }
 
+    /**
+     *
+     *
+     * @param SNPList
+     * @param vcfFile
+     * @throws FileNotFoundException
+     */
     public static void getVCFVariantSubset ( String SNPList, String vcfFile )
             throws FileNotFoundException {
         ArrayList<String> SNPPositions = getSNPs( SNPList );
@@ -31,16 +38,17 @@ public class SNPChecker {
         for( VCFVariant vcfv : vcfh.getVariants() ){
 
             if ( SNPPositions.contains( vcfv.getChromosome()+"-"+vcfv.getPosition() ) ){
-
-                if ( vcfv.getQuality() < 25 || vcfv.getReferenceToAlternativeRatio() >0.2 ){//meetsLowerQualityThreshold( vcfv ) ) {
-                    System.out.println( "WARNING "+"\t"+vcfv.getChromosome()+"\t"+vcfv.getPosition()+"\t"+vcfv.getReference()+"\t"+vcfv.getAlternative()+"\t"+vcfv.getQuality()+"\t"+vcfv.getDepth()+"\t"+vcfv.getQualityDepth()+"\t"+vcfv.getReferenceToAlternativeRatio() );
-                }else{
-                    System.out.println( vcfv.getChromosome()+"\t"+vcfv.getPosition()+"\t"+vcfv.getReference()+"\t"+vcfv.getAlternative()+"\t"+vcfv.getQuality()+"\t"+vcfv.getDepth()+"\t"+vcfv.getQualityDepth()+"\t"+vcfv.getReferenceToAlternativeRatio() );
-                }
+                System.out.println( vcfv.getChromosome()+"\t"+vcfv.getPosition()+"\t"+vcfv.getReference()+"\t"+vcfv.getAlternative()+"\t"+vcfv.getQuality()+"\t"+vcfv.getDepth()+"\t"+vcfv.getQualityDepth()+"\t"+vcfv.getReferenceToAlternativeRatio() );
             }
         }
     }
 
+    /**
+     *
+     * @param fileName
+     * @return
+     * @throws FileNotFoundException
+     */
     private static ArrayList<String> getSNPs ( String fileName )
             throws FileNotFoundException {
         Scanner in = new Scanner( new File( fileName ));
