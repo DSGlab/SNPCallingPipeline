@@ -1,0 +1,428 @@
+import JavaBrew.FastaPrinter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Scanner;
+
+/**
+ * Modified by juliofdiaz on 11/11/14.
+ *
+ *
+ */
+public class VCFHolderMap {
+    public static void main(String[] args) throws Exception {
+
+        //ArrayList<String> verified = getVerifiedSNPs();
+
+        //ArrayList<String> idList = getIds();
+
+        /* Loops through each isolate */
+        //for (String idS : idList) {
+        String idS = "1";
+            System.out.println("isolate "+idS);
+            //PrintWriter out = new PrintWriter("/home/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71-INDEL/"+idS+"-variants_4.txt" );
+
+            File file = new File("/Users/juliofdiaz/Dropbox/CF/references/C71.fa");
+            FastaPrinter ref = new FastaPrinter(file);
+
+
+        String[] varFiles = { "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/BWA-"+idS+"/r.vcf",
+                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/BWA-COR_"+idS+"/r.vcf",
+                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/LAST-"+idS+"/r.vcf",
+                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/LAST-COR_"+idS+"/r.vcf",
+                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/NOVOALIGN-"+idS+"/r.vcf",
+                              "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/NOVOALIGN-COR_"+idS+"/r.vcf" };
+
+
+
+
+
+            LinkedHashMap<String, ArrayList<VCFVariant>> main = getVariantsMap( varFiles );
+
+
+            // Here we filter out the variants whose quality is lower than threshold
+            main = qualityFilterVariantsMap(main, 30);
+
+            // Here we filter out the variants whose sequencing depth is lower than threshold
+            main = qualityDepthFilterVariantsMap(main, 20);
+
+            // Here we filter out the variants that are closer to the contig ends than threshold
+            main = contigEndFilterVariantsMap(main, ref, 250);
+
+            // Here we filter out the variants that are covered unevenly by the forward and reverse reads
+            main = readBalanceFilterVariantsMap(main, 5);
+
+            // Here we filter out the variants that are covered by the
+            main = refToAltRatioFilterVariantsMap(main, 0.2);
+
+
+            LinkedHashMap<String, ArrayList<VCFVariant>> clusterFiltered = clusterFilterVariantsMap(main, 15);
+
+            /* Loops through each position that reports a variant */
+            for (String key : main.keySet()) {
+
+                /* Ensures that position actually reports variant. IOW, variants were not pruned by filtering steps */
+                if (main.get(key).size() != 0) {
+
+                    /* Filters out positions reporting variants where the reference includes "N" */
+                    if (!main.get(key).get(0).isReferenceN()) {
+
+                        /* Filters in/out indels */
+                        if (main.get(key).get(0).isIndel()) {
+                            if ( main.get(key).size() >= 4 ) {
+                            /* THIS IS TO EXTEND SNP LIST
+                            System.out.print(key + "\t");
+                            if (reftoAltRatioFiltered.keySet().contains(key)) {
+                                System.out.print("REFALT_PASS");
+                            }
+                            System.out.print("\t");
+                            if (clusterFiltered.keySet().contains(key)) {
+                                System.out.print("CLUSTER_PASS");
+                            }
+                            System.out.print("\t");
+
+                            System.out.print(main.get(key).get(0).getReference() + "\t");
+                            System.out.print(main.get(key).get(0).getAlternative() + "\t");
+                            System.out.print(main.get(key).get(0).getReferenceToAlternativeRatio() + "\t");
+                            System.out.print(main.get(key).size() + "\t");
+                            System.out.println();
+                            */
+
+                                //ArrayList<String> tmpList = new ArrayList<String>();
+                                //for ( VCFVariant var : main.get(key)) {
+                                //    tmpList.add( var.getAlternative() );
+                                //}
+
+                                /*  */
+                                //if ( isAllSame(tmpList) ) {
+                                System.out.print(key + "\t");
+                                System.out.print(main.get(key).get(0).getReference() + "\t");
+                                System.out.print(main.get(key).get(0).getAlternative() + "\t");
+                                System.out.print(main.get(key).get(0).getReferenceToAlternativeRatio() + "\t");
+                                System.out.print(main.get(key).size() + "\t");
+                                System.out.println();
+                                //}
+
+
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println( );
+        //}
+    }
+
+
+    private static Boolean isAllSame ( ArrayList<String> list ){
+        String prev = list.get(0);
+
+        for ( int i=1; i<list.size(); i++ ) {
+            if ( list.get(i).equals( prev ) ) {
+                return true;
+            }
+            prev = list.get( i );
+        }
+        return false;
+    }
+
+    /**
+     * This method removes variant calls that are clustered next to other variant calls
+     * bellow a set minimum
+     *
+     * @param map maps of variants from all the sources
+     * @param min minimum distance between variant calls
+     * @return the variant map without variant calls bellow the threshold
+     */
+    public static LinkedHashMap<String, ArrayList<VCFVariant>> clusterFilterVariantsMap
+            ( LinkedHashMap<String, ArrayList<VCFVariant>> map, Integer min ) {
+        LinkedHashMap<String, ArrayList<Integer>> contigs = new LinkedHashMap<String, ArrayList<Integer>>();
+
+
+        for ( String s : map.keySet() ) {
+            String s2 = s.split("-")[0];
+            if ( contigs.keySet().contains(s2) ) {
+                //ADD IT TO ARRAYLIST OF THIS KEY
+                ArrayList<Integer> tempIf = contigs.get( s2 );
+                tempIf.add( Integer.parseInt( s.split( "-" )[1] ) );
+
+                contigs.put( s2, tempIf );
+
+            }else {
+                //CREATE NEW KEY
+                ArrayList <Integer> tempElse = new ArrayList<Integer>();
+                tempElse.add( Integer.parseInt( s.split( "-" )[1] ) );
+
+                contigs.put( s2,  tempElse);
+            }
+        }
+
+        ArrayList<String> badList = new ArrayList<String>();
+        for ( String c : contigs.keySet() ) {
+            ArrayList<Integer> list = contigs.get( c );
+            for(Integer i : list){
+                for ( int k=i-min; k<=i+min ;k++ ) {
+                    if ( list.contains(k) && k!=i) {
+                        badList.add( c+"-"+k );
+                    }
+                }
+            }
+        }
+
+        LinkedHashMap<String, ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        for ( String st : map.keySet() ) {
+            if ( !badList.contains( st ) ) {
+                result.put( st, map.get( st ) );
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * This method removes variant calls that are not supported by both forward and reverse
+     * reads above the set minimum
+     *
+     * @param map maps of variants from all the sources
+     * @param min minimum number of reads each direction
+     * @return the variant map without variant calls bellow the threshold
+     */
+    public static LinkedHashMap<String, ArrayList<VCFVariant>> readBalanceFilterVariantsMap
+            ( LinkedHashMap<String, ArrayList<VCFVariant>>  map, Integer min ) {
+        LinkedHashMap<String,ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        for ( String key : map.keySet() ) {
+            ArrayList<VCFVariant> pass = new ArrayList<VCFVariant>();
+
+            for ( VCFVariant var : map.get( key ) ) {
+                if ( var.getDp4AlternativeForward() > min && var.getDp4AlternativeReverse() > min ) {
+                    pass.add( var );
+                }
+            }
+            map.put(key,pass);
+
+            if ( !pass.isEmpty() ) {
+                result.put(key,pass);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method removes variant calls that are too close to the edge of contigs/chromosomes.
+     *
+     * @param map the variant map
+     * @param reference the reference used to map the reads and create the
+     * @param min the minimum distance between the edge of a contig or chromosome
+     * @return the variant map without variant calls below the threshold.
+     */
+    public static LinkedHashMap<String, ArrayList<VCFVariant>> contigEndFilterVariantsMap
+            ( LinkedHashMap<String, ArrayList<VCFVariant>>  map, FastaPrinter reference, Integer min) {
+        LinkedHashMap<String, Integer> ref = new LinkedHashMap<String, Integer>();
+        for ( String k : reference.getSequences().keySet() ) {
+            ref.put( k, reference.getSequences().get(k).length() );
+        }
+
+        LinkedHashMap<String,ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        for ( String key : map.keySet() ) {
+            ArrayList<VCFVariant> pass = new ArrayList<VCFVariant>();
+
+            for ( VCFVariant var : map.get( key ) ) {
+                if ( var.getPosition() > min && var.getPosition()<ref.get( var.getChromosome() )-min ) {
+                    pass.add( var );
+                }
+            }
+            map.put(key,pass);
+
+            if ( !pass.isEmpty() ) {
+                result.put(key,pass);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method removes variant calls where the ratio of reads supporting the reference  to the
+     * reads supporting the variant is under a given threshold.
+     *
+     * @param map the variant map
+     * @param max the maximum ratio of reads supporting the reference to the reads supporting
+     *            the alternative
+     * @return the variant map without the variant calls bellow the threshold
+     */
+    public static LinkedHashMap<String, ArrayList<VCFVariant>> refToAltRatioFilterVariantsMap
+            ( LinkedHashMap<String, ArrayList<VCFVariant>>  map, Double max) {
+        LinkedHashMap<String,ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        for ( String key : map.keySet() ) {
+            ArrayList<VCFVariant> pass = new ArrayList<VCFVariant>();
+
+            for ( VCFVariant var : map.get( key ) ) {
+                if ( var.getReferenceToAlternativeRatio() < max ) {
+                    pass.add( var );
+                }
+            }
+
+            if ( !pass.isEmpty() ) {
+                result.put(key,pass);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method removes variant calls that do not meet the reads depth threshold from
+     * the variant map.
+     *
+     * @param map the variant map
+     * @param min the minimum number of reads at the variant position
+     * @return the variant map without the variant calls bellow the threshold
+     */
+    public static LinkedHashMap<String, ArrayList<VCFVariant>> qualityDepthFilterVariantsMap
+            ( LinkedHashMap<String, ArrayList<VCFVariant>>  map, Integer min) {
+        LinkedHashMap<String,ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        for ( String key : map.keySet() ) {
+            ArrayList<VCFVariant> pass = new ArrayList<VCFVariant>();
+
+            for ( VCFVariant var : map.get( key ) ) {
+                if ( var.getQualityDepth() >= min ) {
+                    pass.add( var );
+                }
+            }
+            map.put(key,pass);
+
+            if ( !pass.isEmpty() ) {
+                result.put(key,pass);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method removes variant calls that do not meet the raw reads depth threshold from
+     * the variant map.
+     *
+     * @param map the variant map
+     * @param min the minimum number of raw reads at the variant position
+     * @return the variant map without the variant calls bellow the threshold
+     */
+    public static LinkedHashMap<String, ArrayList<VCFVariant>> depthFilterVariantsMap
+            ( LinkedHashMap<String, ArrayList<VCFVariant>>  map, Integer min) {
+        LinkedHashMap<String,ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        for ( String key : map.keySet() ) {
+            ArrayList<VCFVariant> pass = new ArrayList<VCFVariant>();
+
+            for ( VCFVariant var : map.get( key ) ) {
+                if ( var.getDepth() >= min ) {
+                    pass.add( var );
+                }
+            }
+            map.put(key,pass);
+
+            if ( !pass.isEmpty() ) {
+                result.put(key,pass);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method removes variant calls that do not meet the quality threshold from the variant
+     * map.
+     *
+     * @param map the variant map
+     * @param min the minimum variant phred score
+     * @return the variant map without the variant calls bellow the threshold
+     */
+    public static LinkedHashMap<String, ArrayList<VCFVariant>> qualityFilterVariantsMap
+            ( LinkedHashMap<String, ArrayList<VCFVariant>>  map, Integer min) {
+        LinkedHashMap<String,ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        for ( String key : map.keySet() ) {
+            ArrayList<VCFVariant> pass = new ArrayList<VCFVariant>();
+
+            for ( VCFVariant var : map.get( key ) ) {
+                if ( var.getQuality() >= min ) {
+                    pass.add( var );
+                }
+            }
+            map.put(key,pass);
+
+            if ( !pass.isEmpty() ) {
+                result.put(key,pass);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method surveys multiple vcf files from a single isolate and different mapping methods. It
+     * creates a map where each variant holds the calls from the different mapping methods.
+     *
+     * @param variantFiles list of the vcf files
+     * @return a LinkedHashMap where the each key is any observed variant (Each variant is labeled as
+     *         {contig/chromosome}-{position}). The target is a list of variants corresponding to said
+     *         variant.
+     * @throws Exception is thrown if any of the files is not found
+     */
+    private static LinkedHashMap<String,ArrayList<VCFVariant>> getVariantsMap ( String... variantFiles )
+            throws Exception{
+        LinkedHashMap<String, ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        ArrayList<VCFHolder> holders  = getVcfHolders( variantFiles );
+
+        for ( VCFHolder v : holders ) {
+            ArrayList<VCFVariant> vv = v.getVariants();
+            for ( VCFVariant var : vv ) {
+                if ( result.keySet().contains( var.getChromosome()+"-"+var.getPosition() ) ) {
+                    result.get( var.getChromosome()+"-"+var.getPosition() ).add( var );
+                }else{
+                    ArrayList<VCFVariant> temp = new ArrayList<VCFVariant>();
+                    temp.add( var );
+                    result.put( var.getChromosome()+"-"+var.getPosition(), temp );
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method gathers the vcf files from the same isolate but from different
+     * read mapping methods
+     *
+     * @param variantFiles list of the vcf files
+     * @return a list of the vcf files as VCFHolders
+     * @throws Exception is thrown if any of the files is not found
+     */
+    private static ArrayList<VCFHolder> getVcfHolders ( String... variantFiles )
+            throws Exception {
+        File file;
+        VCFHolder vh;
+        ArrayList<VCFHolder> vcfHolders = new ArrayList<VCFHolder>();
+
+        for ( String temp : variantFiles ) {
+            file = new File( temp );
+            vh = new VCFHolder(file);
+            vcfHolders.add(vh);
+        }
+
+        return vcfHolders;
+    }
+
+
+
+    private static ArrayList<String> getIds () {
+        ArrayList<String> result = new ArrayList<String>();
+        File f = new File("/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71");
+
+        for ( File cur : f.listFiles() ) {
+            if ( cur.isDirectory() ) {
+                String tempo = cur.getName().split("-")[1].split("_")[0];
+                if( !tempo.equals( "COR" ) ) {
+                    if ( !result.contains(tempo) ) {
+                        result.add( tempo );
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+}
