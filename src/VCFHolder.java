@@ -6,7 +6,7 @@ import java.util.Scanner;
 /**
  * Modified by juliofdiaz on 06/11/14.
  *
- * This object reads a VCF file and records every variant line
+ * This class reads a VCF file and records every variant line
  * as a VCFVariant object.
  *
  * @author julio.diaz@mail.utoronto.ca

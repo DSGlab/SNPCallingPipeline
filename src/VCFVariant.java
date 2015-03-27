@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Modified by juliofdiaz on 06/11/14.
  *
- * This object acquires the data from each variant in a VCF file. The vcf
+ * This class acquires the data from each variant in a VCF file. The vcf
  * file will be read by VCFHolder and each line become this object.
  *
  * @author julio.diaz@mail.utoronto.ca

@@ -7,6 +7,11 @@ import java.util.LinkedHashMap;
 /**
  * Modified by juliofdiaz on 2/26/15.
  *
+ * This class implements the VCFHolderMap class. It creates a VCFHolderMap employing vcf files
+ * from six different read mapping methods ( i.e. bwa, last and novoalign using quality
+ * filtered reads and raw reads ) and it filters the variant calls to meet HQ status. This is
+ * performed for all isolates in our sampling cohort to identify all positions with signal for
+ * HQ SNPs.
  *
  * @author julio.diaz@mail.utoronto.ca
  *
@@ -15,10 +20,10 @@ public class GetHQSNPs {
     public static void main ( String[] args ) throws Exception {
 
 
+        String id = "1";
         String SUFFIX = "/r.vcf";
         String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/");
         String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/C71.fa";
-        String id = "1";
 
         System.out.println( "ITEM: " + id );
         run( REF_FILE, WORKING_DIR, id, SUFFIX );

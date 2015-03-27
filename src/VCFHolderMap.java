@@ -7,6 +7,11 @@ import java.util.LinkedHashMap;
 /**
  * Modified by juliofdiaz on 11/11/14.
  *
+ * This class is set to be implemented by another class. The user would instantiate a variant map
+ * using the getVariantsMap() method. This method requires vcf files obtained from different
+ * mapping methods using the same reads and same reference. The getVariantsMap() method returns a
+ * map as a LinkedHashMap where the key is the variant identifier and the target is a list of the
+ * variant calls from the different mapping methods.
  *
  * @author julio.diaz@mail.utoronto.ca
  *
@@ -14,6 +19,37 @@ import java.util.LinkedHashMap;
 public class VCFHolderMap {
     public static void main(String[] args) throws Exception {
 
+
+    }
+    /**
+     * This method surveys multiple vcf files from a single isolate and different mapping methods
+     * (the reference needs to be the same). It creates a map where each variant holds the calls
+     * from the different mapping methods.
+     *
+     * @param variantFiles list of the vcf files
+     * @return a LinkedHashMap where the each key is any observed variant (Each variant is labeled as
+     *         {contig/chromosome}-{position}). The target is a list of variants corresponding to said
+     *         variant.
+     * @throws Exception is thrown if any of the files is not found
+     */
+    public static LinkedHashMap<String,ArrayList<VCFVariant>> getVariantsMap ( String... variantFiles )
+            throws Exception{
+        LinkedHashMap<String, ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
+        ArrayList<VCFHolder> holders  = getVcfHolders( variantFiles );
+
+        for ( VCFHolder v : holders ) {
+            ArrayList<VCFVariant> vv = v.getVariants();
+            for ( VCFVariant var : vv ) {
+                if ( result.keySet().contains( var.getChromosome()+"-"+var.getPosition() ) ) {
+                    result.get( var.getChromosome()+"-"+var.getPosition() ).add(var);
+                }else{
+                    ArrayList<VCFVariant> temp = new ArrayList<VCFVariant>();
+                    temp.add( var );
+                    result.put(var.getChromosome() + "-" + var.getPosition(), temp);
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -237,36 +273,6 @@ public class VCFHolderMap {
 
             if ( !pass.isEmpty() ) {
                 result.put(key,pass);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * This method surveys multiple vcf files from a single isolate and different mapping methods. It
-     * creates a map where each variant holds the calls from the different mapping methods.
-     *
-     * @param variantFiles list of the vcf files
-     * @return a LinkedHashMap where the each key is any observed variant (Each variant is labeled as
-     *         {contig/chromosome}-{position}). The target is a list of variants corresponding to said
-     *         variant.
-     * @throws Exception is thrown if any of the files is not found
-     */
-    public static LinkedHashMap<String,ArrayList<VCFVariant>> getVariantsMap ( String... variantFiles )
-            throws Exception{
-        LinkedHashMap<String, ArrayList<VCFVariant>> result = new LinkedHashMap<String, ArrayList<VCFVariant>>();
-        ArrayList<VCFHolder> holders  = getVcfHolders( variantFiles );
-
-        for ( VCFHolder v : holders ) {
-            ArrayList<VCFVariant> vv = v.getVariants();
-            for ( VCFVariant var : vv ) {
-                if ( result.keySet().contains( var.getChromosome()+"-"+var.getPosition() ) ) {
-                    result.get( var.getChromosome()+"-"+var.getPosition() ).add(var);
-                }else{
-                    ArrayList<VCFVariant> temp = new ArrayList<VCFVariant>();
-                    temp.add( var );
-                    result.put(var.getChromosome() + "-" + var.getPosition(), temp);
-                }
             }
         }
         return result;
