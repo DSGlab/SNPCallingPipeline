@@ -6,14 +6,21 @@ import java.util.Scanner;
 /**
  * Created by juliofdiaz on 2/19/15.
  *
+ * This class inspects every loci provided by a SNP list and returns all the read information
+ * for each isolate from the cohort at those positions.
+ *
+ * @author julio.diaz@mail.utoronto.ca
  *
  */
 public class SNPChecker {
 
+
     public static void main ( String[] args) throws FileNotFoundException {
 
 
-        for( String i : getIds() ) {
+        ArrayList<String> isolates = getIds();
+
+        for( String i : isolates ) {
             System.out.println("ITEM " + i);
 
             String snpList = "/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71/snplist2.txt";
@@ -24,11 +31,12 @@ public class SNPChecker {
     }
 
     /**
+     * This method checks every position provided by the SNP list in the vcf file provided
+     * and it returns information (if found) about that positions
      *
-     *
-     * @param SNPList
-     * @param vcfFile
-     * @throws FileNotFoundException
+     * @param SNPList the path and name of the file containing the list of variants
+     * @param vcfFile the path and name of the vcf file
+     * @throws FileNotFoundException if vcf file or variant list is not found.
      */
     public static void getVCFVariantSubset ( String SNPList, String vcfFile )
             throws FileNotFoundException {
@@ -38,18 +46,30 @@ public class SNPChecker {
         for( VCFVariant vcfv : vcfh.getVariants() ){
 
             if ( SNPPositions.contains( vcfv.getChromosome()+"-"+vcfv.getPosition() ) ){
-                System.out.println( vcfv.getChromosome()+"\t"+vcfv.getPosition()+"\t"+vcfv.getReference()+"\t"+vcfv.getAlternative()+"\t"+vcfv.getQuality()+"\t"+vcfv.getDepth()+"\t"+vcfv.getQualityDepth()+"\t"+vcfv.getReferenceToAlternativeRatio() );
+                System.out.println( vcfv.getChromosome() + "\t" + vcfv.getPosition() + "\t" +
+                        vcfv.getReference() + "\t" + vcfv.getAlternative() + "\t" + vcfv.getQuality() +
+                        "\t" + vcfv.getDepth() + "\t" + vcfv.getQualityDepth() + "\t" +
+                        vcfv.getReferenceToAlternativeRatio() );
             }
         }
     }
 
     /**
+     * This method reads a file containing positions that will be reviewed and it returns
+     * an ArrayList with them. The file needs to be a single text file where each line is
+     * a variant position in the following format:
+     * {contig/chromosome}-{position in contig/chromosome}
      *
-     * @param fileName
-     * @return
-     * @throws FileNotFoundException
+     * The contig/chromosome identifier must be identical to the CHROM column from the vcf
+     * format and the position identifier must be identical to the POS column from the vcf
+     * format.
+     *
+     * @param fileName the name of the file containing the SNP positions that need to
+     *                 be reviewed.
+     * @return a list of all positions that need to be reviewed
+     * @throws FileNotFoundException if file is not found
      */
-    private static ArrayList<String> getSNPs ( String fileName )
+    public static ArrayList<String> getSNPs ( String fileName )
             throws FileNotFoundException {
         Scanner in = new Scanner( new File( fileName ));
 
@@ -70,7 +90,6 @@ public class SNPChecker {
                 String tempo = cur.getName().split("-")[1].split("_")[0];
                 if( !tempo.equals( "COR" ) ) {
                     if ( !result.contains(tempo) ) {
-                        //System.out.println(tempo);
                         result.add( tempo );
                     }
                 }
