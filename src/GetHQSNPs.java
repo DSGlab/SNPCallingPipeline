@@ -17,16 +17,46 @@ import java.util.LinkedHashMap;
  *
  */
 public class GetHQSNPs {
+    private static final String DIR_SEPARATOR = "/";
+
     public static void main ( String[] args ) throws Exception {
+        ArrayList<String> snpPositions = new ArrayList<String>();
+        String[] ids = {"1","2","3","4","5","6C","7","8","9","10","11","12C","13","14","15","16","17","18","19","20"};
 
+        for( String id : ids ) {
+            String SUFFIX = "/r.vcf";
+            //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/");
+            //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/C71.fa";
+            String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/");
+            String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
 
-        String id = "1";
-        String SUFFIX = "/r.vcf";
-        String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/");
-        String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/C71.fa";
+            ArrayList<String> temp = run(REF_FILE, WORKING_DIR, id, SUFFIX);
 
-        System.out.println( "ITEM: " + id );
-        run( REF_FILE, WORKING_DIR, id, SUFFIX );
+            for ( String t : temp ) {
+                if ( !snpPositions.contains(t) ) {
+                    snpPositions.add(t);
+                    System.out.println( t );
+                }
+            }
+        }
+
+        System.out.println( snpPositions.size() );
+    }
+
+    /**
+     *
+     * @param refFile
+     * @param workingDir
+     * @param id
+     * @param suffix
+     * @throws Exception
+     */
+    public static void printOnScreen ( String refFile, String workingDir, String id, String suffix )
+            throws Exception {
+        ArrayList<String> snps = run(refFile, workingDir, id, suffix);
+        for ( String s : snps ) {
+            System.out.println(s);
+        }
     }
 
     /**
@@ -36,23 +66,24 @@ public class GetHQSNPs {
      * as {reference contig}-{position}
      *
      * @param refFile the path and name of the file containing the reference in fasta file
-     * @param workngDir the working directory where the vcf file are located
+     * @param workingDir the working directory where the vcf file are located
      * @param id the identifier of the isolate
      * @param suffix the suffix of the file of each vcf file ( e.g. ".vcf" )
      * @throws Exception
+     * @note The ArrayList should eventually hold VCFVariants
      */
-    private static void run ( String refFile, String workngDir, String id, String suffix )
+    private static ArrayList<String> run ( String refFile, String workingDir, String id, String suffix )
             throws Exception {
-
+        ArrayList<String> result = new ArrayList<String>();
         File file = new File( refFile );
         FastaPrinter ref = new FastaPrinter( file );
 
-        String[] varFiles = { workngDir + "BWA-" + id + suffix,
-                              workngDir + "BWA-COR_" + id + suffix,
-                              workngDir + "LAST-" + id + suffix,
-                              workngDir + "LAST-COR_" + id + suffix,
-                              workngDir + "NOVOALIGN-" + id + suffix,
-                              workngDir + "NOVOALIGN-COR_" + id + suffix };
+        String[] varFiles = { workingDir + "BWA-" + id + suffix,
+                              workingDir + "BWA-COR_" + id + suffix,
+                              workingDir + "LAST-" + id + suffix,
+                              workingDir + "LAST-COR_" + id + suffix,
+                              workingDir + "NOVOALIGN-" + id + suffix,
+                              workingDir + "NOVOALIGN-COR_" + id + suffix };
 
         LinkedHashMap<String, ArrayList<VCFVariant>> main = VCFHolderMap.getVariantsMap(varFiles);
 
@@ -89,14 +120,13 @@ public class GetHQSNPs {
 
                         /* Filters out positins that are not reported by all the methods */
                         if ( main.get(key).size() == 6 ) {
-                            System.out.print( key + "\t" );
-                            System.out.println();
+                            result.add(key);
                         }
                     }
                 }
             }
         }
-
+        return result;
     }
 
     /**
@@ -109,7 +139,7 @@ public class GetHQSNPs {
     private static String checkDir( String dirString ) {
         File dir = new File ( dirString );
         if ( dir.isDirectory() ) {
-            return dir.getPath()+"/";
+            return dir.getPath() + DIR_SEPARATOR;
         } else {
             return "";
         }

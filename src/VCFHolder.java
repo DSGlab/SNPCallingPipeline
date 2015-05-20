@@ -14,9 +14,17 @@ import java.util.Scanner;
  */
 public class VCFHolder {
     private ArrayList<VCFVariant> variants;
+    /*This should be modified to make variants an extendable class*/
+    public ArrayList<VCFVariantDindel> dindelVariants;
+
 
     public ArrayList<VCFVariant> getVariants () {
         return this.variants;
+    }
+
+    /*This should be modified to make variants an extendable class*/
+    public ArrayList<VCFVariantDindel> getDindelVariants () {
+        return  this.dindelVariants;
     }
 
     public VCFHolder ( String s ) throws FileNotFoundException{
@@ -31,6 +39,20 @@ public class VCFHolder {
             String tempLine = in.nextLine();
             if( tempLine.charAt(0) != '#' ){
                 this.variants.add(new VCFVariant(tempLine));
+            }
+        }
+    }
+
+    public VCFHolder (File f, String type) throws FileNotFoundException {
+        if( type.equals("DINDEL") ) {
+            this.dindelVariants = new ArrayList<VCFVariantDindel>();
+            Scanner in = new Scanner(f);
+
+            while (in.hasNextLine()) {
+                String tempLine = in.nextLine();
+                if (tempLine.charAt(0) != '#') {
+                    this.dindelVariants.add(new VCFVariantDindel(tempLine));
+                }
             }
         }
     }

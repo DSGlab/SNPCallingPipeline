@@ -17,14 +17,16 @@ public class SNPChecker {
 
     public static void main ( String[] args) throws FileNotFoundException {
 
-
-        ArrayList<String> isolates = getIds();
+        String[] isolates = {"1","2","3","4","5","6C","7","8","9","10","11","12C","13","14","15","16","17","18","19","20"};
+        //String[] isolates = {"20"};
 
         for( String i : isolates ) {
             System.out.println("ITEM " + i);
 
-            String snpList = "/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71/snplist2.txt";
-            String vcf = "/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71/BWA-COR_" + i + "/r.vcf";
+            //String snpList = "/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71/snplist2.txt";
+            //String vcf = "/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71/BWA-COR_" + i + "/r.vcf";
+            String snpList = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/snplist.txt";
+            String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/NOVOALIGN-COR_" + i + "/r.vcf";
 
             getVCFVariantSubset(snpList, vcf);
         }
@@ -44,7 +46,6 @@ public class SNPChecker {
         VCFHolder vcfh = new VCFHolder( vcfFile );
 
         for( VCFVariant vcfv : vcfh.getVariants() ){
-
             if ( SNPPositions.contains( vcfv.getChromosome()+"-"+vcfv.getPosition() ) ){
                 System.out.println( vcfv.getChromosome() + "\t" + vcfv.getPosition() + "\t" +
                         vcfv.getReference() + "\t" + vcfv.getAlternative() + "\t" + vcfv.getQuality() +
