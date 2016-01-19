@@ -17,16 +17,21 @@ public class SNPChecker {
 
     public static void main ( String[] args) throws FileNotFoundException {
 
-        String[] isolates = {"1","2","3","4","5","6C","7","8","9","10","11","12C","13","14","15","16","17","18","19","20"};
+        //String[] isolates = {"1","2","3","4","5","6C","7","8","9","10","11","12C","13","14","15","16","17","18","19","20"};
         //String[] isolates = {"20"};
+        String[] isolates = {"1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j"};
 
         for( String i : isolates ) {
-            System.out.println("ITEM " + i);
+            //System.out.println("ITEM " + i);
 
             //String snpList = "/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71/snplist2.txt";
             //String vcf = "/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71/BWA-COR_" + i + "/r.vcf";
-            String snpList = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/snplist.txt";
-            String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/NOVOALIGN-COR_" + i + "/r.vcf";
+
+            //String snpList = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/snplist.txt";
+            //String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/NOVOALIGN-COR_" + i + "/r.vcf";
+
+            String snpList ="/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_AU0158/intraSNPList.txt";
+            String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_AU0158/" + i + "-COR_BWA/r.vcf";
 
             getVCFVariantSubset(snpList, vcf);
         }
@@ -50,6 +55,8 @@ public class SNPChecker {
                 System.out.println( vcfv.getChromosome() + "\t" + vcfv.getPosition() + "\t" +
                         vcfv.getReference() + "\t" + vcfv.getAlternative() + "\t" + vcfv.getQuality() +
                         "\t" + vcfv.getDepth() + "\t" + vcfv.getQualityDepth() + "\t" +
+                        "\t" + vcfv.getDp4ReferenceForward() + "\t" + vcfv.getDp4ReferenceReverse() + "\t" +
+                        "\t" + vcfv.getDp4AlternativeForward() + "\t" + vcfv.getDp4AlternativeReverse() + "\t" +
                         vcfv.getReferenceToAlternativeRatio() );
             }
         }
@@ -82,21 +89,4 @@ public class SNPChecker {
         return result;
     }
 
-    private static ArrayList<String> getIds () {
-        ArrayList<String> result = new ArrayList<String>();
-        File f = new File("/Users/juliofdiaz/Documents/CF67/snp_calling/CF67_C71");
-
-        for ( File cur : f.listFiles() ) {
-            if ( cur.isDirectory() ) {
-                String tempo = cur.getName().split("-")[1].split("_")[0];
-                if( !tempo.equals( "COR" ) ) {
-                    if ( !result.contains(tempo) ) {
-                        result.add( tempo );
-                    }
-                }
-            }
-        }
-        //System.out.println(result.size());
-        return result;
-    }
 }

@@ -13,6 +13,7 @@ import java.util.List;
  *
  */
 public class VCFVariant {
+    private String parentId;
     private String chromosome;
     private Integer position;
     private String reference;
@@ -26,6 +27,10 @@ public class VCFVariant {
     private Integer dp4AlternativeForward;
     private Integer dp4AlternativeReverse;
 
+    public VCFVariant ( ) {
+
+    }
+
     public VCFVariant ( String VCFLine ) {
         String []data = VCFLine.split("\t");
         this.chromosome = data[0];
@@ -38,6 +43,14 @@ public class VCFVariant {
                 dp4ReferenceForward + dp4ReferenceReverse;
     }
 
+    public String getParentId() {
+        return this.parentId;
+    }
+
+    public void setParentId ( String parentId ) {
+        this.parentId = parentId;
+    }
+
     public Integer getQualityDepth () {
         return this.qualityDepth;
     }
@@ -46,17 +59,27 @@ public class VCFVariant {
         return this.chromosome;
     }
 
+    public void setChromosome ( String chromosome ) {
+        this.chromosome = chromosome;
+    }
+
     public Integer getPosition () {
         return this.position;
     }
+
+    public void setPosition ( Integer position ) { this.position = position; }
 
     public String getReference () {
         return this.reference;
     }
 
+    public void setReference ( String reference ) { this.reference = reference; }
+
     public String getAlternative () {
         return this.alternative;
     }
+
+    public void setAlternative ( String alternative ) { this.alternative = alternative; }
 
     public Double getQuality () {
         return this.quality;
@@ -159,4 +182,5 @@ public class VCFVariant {
     public Boolean isIndel(){
         return this.type.equals( "INDEL" );
     }
+
 }
