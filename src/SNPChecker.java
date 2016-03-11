@@ -30,8 +30,8 @@ public class SNPChecker {
             //String snpList = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/snplist.txt";
             //String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/NOVOALIGN-COR_" + i + "/r.vcf";
 
-            String snpList ="/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_AU0158/intraSNPList.txt";
-            String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_AU0158/" + i + "-COR_BWA/r.vcf";
+            String snpList ="/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/SNPList.txt";
+            String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/" + i + "_BWA/r.vcf";
 
             getVCFVariantSubset(snpList, vcf);
         }
@@ -52,7 +52,8 @@ public class SNPChecker {
 
         for( VCFVariant vcfv : vcfh.getVariants() ){
             if ( SNPPositions.contains( vcfv.getChromosome()+"-"+vcfv.getPosition() ) ){
-                System.out.println( vcfv.getChromosome() + "\t" + vcfv.getPosition() + "\t" +
+                System.out.println( vcfFile + "\t" +
+                        vcfv.getChromosome() + "\t" + vcfv.getPosition() + "\t" +
                         vcfv.getReference() + "\t" + vcfv.getAlternative() + "\t" + vcfv.getQuality() +
                         "\t" + vcfv.getDepth() + "\t" + vcfv.getQualityDepth() + "\t" +
                         "\t" + vcfv.getDp4ReferenceForward() + "\t" + vcfv.getDp4ReferenceReverse() + "\t" +

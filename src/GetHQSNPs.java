@@ -25,16 +25,22 @@ public class GetHQSNPs {
         //First Set of data from CF170
         //String[] ids = {"1","2","3","4","5","6C","7","8","9","10","11","12C","13","14","15","16","17","18","19","20"};
         String[] ids = {"1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j"};
+        //String[] ids = {"1c","1d","1e","1f","1g","1h","1i","1j","2c","2d","2e","2f","2g","2h","2i","2j","3c","3d","3e","3f","3g","3h","3i","3j","4c","4d","4e","4f","4g","4h","4i","4j","5c","5d","5e","5f","5g","5h","5i","5j","6c","6d","6e","6f","6g","6h","6i","6j","7c","7d","7e","7f","7g","7h","7i","7j","8c","8d","8e","8f","8g","8h","8i","8j","9c","9d","9e","9f","9g","9h","9i","9j","10c","10d","10e","10f","10g","10h","10i","10j"};
 
         for( String id : ids ) {
             String SUFFIX = "/r.vcf";
+            //System.out.println("\t"+id);
             //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/");
             //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/C71.fa";
+
             //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/");
             //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
 
-            String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_AU0158/");
-            String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/AU0158.fa";
+            String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/");
+            String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/8f.fa";
+
+            //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/");
+            //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
 
 
             ArrayList<String> temp = run(REF_FILE, WORKING_DIR, id, SUFFIX);
@@ -86,13 +92,14 @@ public class GetHQSNPs {
         File file = new File( refFile );
         FastaPrinter ref = new FastaPrinter( file );
 
-        String[] varFiles = { workingDir + id + "_BWA" + suffix,
-                              workingDir + id + "-COR_BWA" + suffix,
+        String[] varFiles = {
+                              workingDir + id + "_BWA" + suffix,
+                              //workingDir + id + "-COR_BWA" + suffix,
                               workingDir + id + "_LAST" + suffix,
-                              workingDir + id + "-COR_LAST" + suffix,
+                              //workingDir + id + "-COR_LAST" + suffix,
                               workingDir + id + "_NOVOALIGN" + suffix,
-                              workingDir + id + "-COR_NOVOALIGN" + suffix };
-
+                              //workingDir + id + "-COR_NOVOALIGN" + suffix
+                            };
         LinkedHashMap<String, ArrayList<VCFVariant>> main = VCFHolderMap.getVariantsMap(varFiles);
 
         /* Here we filter out the variants whose quality is lower than threshold */
@@ -115,7 +122,7 @@ public class GetHQSNPs {
         main = VCFHolderMap.contigEndFilterVariantsMap(main, ref, 250);
 
         /* Here we filter out the variants that are covered unevenly by the forward and reverse reads */
-        main = VCFHolderMap.readBalanceFilterVariantsMap(main, 5);
+        main = VCFHolderMap.readBalanceFilterVariantsMap(main, 3);
 
         /* Here we filter out the variants where sufficient reads support the reference */
         main = VCFHolderMap.refToAltRatioFilterVariantsMap(main, 0.2);
@@ -137,7 +144,7 @@ public class GetHQSNPs {
                     if ( !main.get(key).get(0).isIndel() ) {
 
                         /* Filters out positins that are not reported by all the methods */
-                        if ( main.get(key).size() >= 1 ) {
+                        if ( main.get(key).size() == 3 ) {
                             result.add(key);
                         }
                     }
