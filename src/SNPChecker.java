@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -19,7 +20,8 @@ public class SNPChecker {
 
         //String[] isolates = {"1","2","3","4","5","6C","7","8","9","10","11","12C","13","14","15","16","17","18","19","20"};
         //String[] isolates = {"20"};
-        String[] isolates = {"1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j"};
+        //String[] isolates = {"1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j"};
+        String[] isolates = {"0a","1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j"};//,"3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j","9a","9b","9c","9d","9e","9f","9g","9h","9i","9j","10a","10b","10c","10d","10e","10f","10g","10h","10i","10j","11a","11b","11c","11d","11e","11f","11g","11h","11i","11j"};
 
         for( String i : isolates ) {
             //System.out.println("ITEM " + i);
@@ -30,8 +32,11 @@ public class SNPChecker {
             //String snpList = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/snplist.txt";
             //String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/NOVOALIGN-COR_" + i + "/r.vcf";
 
-            String snpList ="/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/SNPList.txt";
-            String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/" + i + "_BWA/r.vcf";
+            String snpList = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNPList.txt";
+            String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/" + i + "_BWA/r.vcf";
+
+            //String snpList ="/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/SNPList.txt";
+            //String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/" + i + "_BWA/r.vcf";
 
             getVCFVariantSubset(snpList, vcf);
         }
@@ -50,17 +55,19 @@ public class SNPChecker {
         ArrayList<String> SNPPositions = getSNPs( SNPList );
         VCFHolder vcfh = new VCFHolder( vcfFile );
 
+        //PrintWriter out = new PrintWriter("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNPChecked_BWA.txt");
         for( VCFVariant vcfv : vcfh.getVariants() ){
             if ( SNPPositions.contains( vcfv.getChromosome()+"-"+vcfv.getPosition() ) ){
-                System.out.println( vcfFile + "\t" +
+                System.out.print( vcfFile + "\t" +
                         vcfv.getChromosome() + "\t" + vcfv.getPosition() + "\t" +
                         vcfv.getReference() + "\t" + vcfv.getAlternative() + "\t" + vcfv.getQuality() +
                         "\t" + vcfv.getDepth() + "\t" + vcfv.getQualityDepth() + "\t" +
                         "\t" + vcfv.getDp4ReferenceForward() + "\t" + vcfv.getDp4ReferenceReverse() + "\t" +
                         "\t" + vcfv.getDp4AlternativeForward() + "\t" + vcfv.getDp4AlternativeReverse() + "\t" +
-                        vcfv.getReferenceToAlternativeRatio() );
+                        vcfv.getReferenceToAlternativeRatio() + "\n" );
             }
         }
+        //out.close();
     }
 
     /**
