@@ -6,7 +6,11 @@ import java.util.*;
  * Created by juliofdiaz on 5/20/15.
  *
  * This program takes a list of SNPs in the format specified in
- * doc/Sample-SNP_CHECKED_FILE.tx
+ * doc/Sample-SNP_CHECKED_FILE.txt; then it returns a sorted list
+ * and a fasta formatted alignment of the SNPs identified.
+ *
+ * This is STEP THREE of the SNP calling pipeline. It takes a reviewed version
+ * of the output of STEP TWO (SNPChecker).
  *
  *  @author juliofdiazc
  */
@@ -103,8 +107,8 @@ public class CreateAlignmentFromSNPChecked {
      * From a list of VCFVariants, this method retrieves all variant positions and their
      * respective reference base.The list of variants should be called from the same reference.
      *
-     * @param variants a l
-     * @return LinkedHashMap
+     * @param variants list of variants
+     * @return LinkedHashMap map of reference identity of each SNP
      */
     private static LinkedHashMap<String, String> getReference ( ArrayList<VCFVariant> variants ){
         ArrayList<String> temp = new ArrayList<String>();
@@ -121,10 +125,11 @@ public class CreateAlignmentFromSNPChecked {
     }
 
     /**
-     * This method needs to be better annotated
+     * This method sorts items first by contig and then by position in contig.
      *
-     * @param ref               reference
-     * @return LinkedHashMap
+     * @param ref reference
+     * @return LinkedHashMap the list of sorted reference items
+     * @note This method needs to be better annotated
      */
     private static LinkedHashMap<String,String> sortReferenceItems ( LinkedHashMap<String,String> ref ) {
         LinkedHashMap<String,String> result = new LinkedHashMap<String, String>();

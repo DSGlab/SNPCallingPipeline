@@ -5,20 +5,28 @@ import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 /**
- * Created by juliofdiaz on 1/11/16.
+ * This method complements GetHQSNPs when the reference employed is not from an
+ * organism from the same population. Tnis method takes al the SNPs and finds
+ * which ones do not differ in at least one isolate and returns a list of only
+ * the SNPs that segregate in the population.
+ *
+ * This is STEP ONE.ONE from the SNP calling pipeline. It takes the output from
+ * GetHQSNPs and it returns only intraclonal SNPs. The output should be reviewed
+ * in STEP TWO (SNPChecker).
  *
  * @author juliofdiazc
  */
 public class GetIntraClonalSNPs {
+    private static final String SUFFIX = "/r.vcf";
+
     public static void main ( String[] args ) throws Exception {
         ArrayList<String> HQsnpList = getSNPs("/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_NEW/AllSNPList.txt");
 
 
         String[] ids = {"1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j"};
-        String suffix = "/r.vcf";
         String workingDir = "/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V2/";
 
-        LinkedHashMap<String, VCFHolder> snpCalls = getAllSNPCalls(workingDir, suffix, ids);
+        LinkedHashMap<String, VCFHolder> snpCalls = getAllSNPCalls(workingDir, SUFFIX, ids);
 
         //System.out.print(snpCalls.size());
 
@@ -45,10 +53,11 @@ public class GetIntraClonalSNPs {
 
     /**
      *
-     * @param prefix
-     * @param suffix
-     * @param ids
-     * @return
+     *
+     * @param prefix beginning of file
+     * @param suffix end of file
+     * @param ids list of isolate ids
+     * @return list of all the SNP calls
      * @throws FileNotFoundException
      */
     public static LinkedHashMap<String, VCFHolder> getAllSNPCalls(String prefix, String suffix, String[] ids)

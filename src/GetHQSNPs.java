@@ -13,11 +13,17 @@ import java.util.LinkedHashMap;
  * performed for all isolates in our sampling cohort to identify all positions with signal for
  * HQ SNPs.
  *
+ * This is the STEP ONE of the SNP calling pipeline. If the reference is the genome of a bacteria
+ * in the same population check the HQ SNP positions in all the isolates with SNPChecker; otherwise,
+ * extract the intra clonal SNPs with GetIntraClonalSNPs.
+ *
  * @author julio.diaz@mail.utoronto.ca
  *
  */
 public class GetHQSNPs {
     private static final String DIR_SEPARATOR = "/";
+    private static final String SUFFIX = "/r.vcf";
+
 
     public static void main ( String[] args ) throws Exception {
         ArrayList<String> snpPositions = new ArrayList<String>();
@@ -29,7 +35,6 @@ public class GetHQSNPs {
         String[] ids = {"0a","1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j","9a","9b","9c","9d","9e","9f","9g","9h","9i","9j","10a","10b","10c","10d","10e","10f","10g","10h","10i","10j","11a","11b","11c","11d","11e","11f","11g","11h","11i","11j"};
 
         for( String id : ids ) {
-            String SUFFIX = "/r.vcf";
             //System.out.println("\t"+id);
             //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/");
             //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/C71.fa";
@@ -58,11 +63,12 @@ public class GetHQSNPs {
     }
 
     /**
+     * This is a debugging method that allows to print the HQ SNPs.
      *
-     * @param refFile
-     * @param workingDir
-     * @param id
-     * @param suffix
+     * @param refFile the path and name of the file containing the reference in fasta file
+     * @param workingDir the working directory where the vcf file are located
+     * @param id the identifier of the isolate
+     * @param suffix the suffix of the file of each vcf file ( e.g. ".vcf" )
      * @throws Exception
      */
     public static void printOnScreen ( String refFile, String workingDir, String id, String suffix )
@@ -109,7 +115,7 @@ public class GetHQSNPs {
         for ( String key : main.keySet() ) {
             for(VCFVariant temp: main.get(key)){
                 if( temp.getQuality() < 30 ) {
-                    System.out.println(temp.getQuality());
+                    System.out.println(temp.getQuality()+"what is this?");
                 }
             }
         }

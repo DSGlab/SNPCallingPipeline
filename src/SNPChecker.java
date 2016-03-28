@@ -7,8 +7,15 @@ import java.util.Scanner;
 /**
  * Created by juliofdiaz on 2/19/15.
  *
- * This class inspects every loci provided by a SNP list and returns all the read information
- * for each isolate from the cohort at those positions.
+ * This class inspects every loci provided by a SNP list and returns all the read
+ * information for each isolate from the cohort at those positions.
+ *
+ * This is STEP TWO of the SNP calling Pipeline. This program takes the HQ SNP positions
+ * identified in STEP ONE (GetHQSNPs) [If the reference is not a bacteria within the same
+ * population then get intra conal SNPs at GetIntraClonalSNPs] and reviews them in all
+ * the isolates. The resulting reviewed SNP positions should be assessed to find out if
+ * they may be ambiguous calls. Then, The reviewed SNP positions, can then be aligned
+ * using CreateAlignmentFromSNPChecked.
  *
  * @author julio.diaz@mail.utoronto.ca
  *

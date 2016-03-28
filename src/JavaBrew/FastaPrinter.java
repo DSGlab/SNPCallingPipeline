@@ -32,8 +32,8 @@ public class FastaPrinter {
         try {
             contigs = FastaReaderHelper.readFastaDNASequence( file );
         } catch (Exception e) {
-            System.err.println( file +  "is not in fasta format or it does not exist." );
-            e.printStackTrace();
+            System.err.println( "ERROR\t" + file +  " IS NOT IN FASTA FORMAT OR IT DOES NOT EXIST." );
+            //e.printStackTrace();
         }
         //THIS SHOULD GO AWAY BECAUSE VALUES SHOULD BE DNASequence
         if ( contigs != null ) {
