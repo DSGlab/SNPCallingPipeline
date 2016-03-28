@@ -1,12 +1,29 @@
+import JavaBrew.FastaPrinter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 /**
- * Created by juliofdiaz on 3/11/16.
+ * This program returns information about SNPs given an
+ * annotated reference. The annotated reference should be in
+ * "Spreadsheet (tab-separated text format)" style from RAST. The
+ * SNPs should be in the format specified in doc/Sample-VAR_FILE.txt
+ * In order to get information about the SNPs found in intragenic
+ * regions, include the reference in fasta format.
+ *
+ * Type of SNPS:    SYN synonymous
+ *                  NSY non-synonymous
+ *                  INT intergenic
+ *                  RGN Regulatory region of next gene
+ *                  RGP Regulatory region of previous gene
+ *                  RGB Regulatory region of both adjacent genes
+ *
+ * Regulatory regions are specified in REG_REGION.
  *
  * @author juliofdiazc
  */
@@ -15,43 +32,100 @@ public class ExtractSNPInfoFromRast {
     public static void main (String[] args) throws FileNotFoundException {
         String ANNOT_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.txt";
         String VAR_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/variants.txt";
+        String REF_CONTIGS = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
+        String OUT_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNP_annot.txt";
+
+        Integer REG_REGION = 150;
 
         ArrayList<Annotation> annotList = getAnnotations(ANNOT_FILE);
         ArrayList<Variant> varList = getVariants(VAR_FILE);
+        LinkedHashMap<String, String> reference = new FastaPrinter(new File(REF_CONTIGS)).getSequences();
 
-        PrintWriter out = new PrintWriter("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNP_annot.txt");
+        PrintWriter out = new PrintWriter( OUT_FILE );
+        out.println("CONTIG\tPOSITION\tSTRAND\tSTART_ANNOT\tEND_ANNOT\t\tREF\tALT\tREF (in annot)\tCODON_POS (0 index)\t" +
+                "POS_IN_GENE (o index)\tREF_CODON\tALT_CODON\tREF_AA\tALT_AA\tTYPE\tDNA");
         for( Variant curVar : varList ){
+            Boolean isIntragenic = false;
             out.print( curVar.getContig() + "\t" + curVar.getPosition() );
             for( Annotation curAnnot : annotList ){
                 if ( isVariantInAnnotation( curVar, curAnnot ) ) {
+                    isIntragenic = true;
                     if (curAnnot.getStrand() == '+') {
-                            out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
-                            out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t" );
-                            int posInGene = curVar.getPosition()-curAnnot.getStart();
-                            int posInCodon = posInGene%3;
-                            int codonStart = posInGene-posInCodon;
-                            String codon = curAnnot.getNucleotideSeq().substring(codonStart,codonStart+3).toUpperCase();
-                            String altCodon = getAlternativeCodon(codon, posInCodon, curVar.getAlternative(), curAnnot.getStrand()).toUpperCase();
-                            char refAA = getAA(codon.toUpperCase());
-                            char altAA = getAA(altCodon.toUpperCase());
-                            String mutType = getMutationType(refAA,altAA);
-                            out.print( curAnnot.getNucleotideSeq().charAt( posInGene ) + "\t"+posInCodon+"\t"+codonStart+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getNucleotideSeq() );
+                        out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
+                        out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t" );
+                        int posInGene = curVar.getPosition()-curAnnot.getStart();
+                        int posInCodon = posInGene%3;
+                        int codonStart = posInGene-posInCodon;
+                        String codon = curAnnot.getNucleotideSeq().substring(codonStart,codonStart+3).toUpperCase();
+                        String altCodon = getAlternativeCodon(codon, posInCodon, curVar.getAlternative(), curAnnot.getStrand()).toUpperCase();
+                        char refAA = getAA(codon.toUpperCase());
+                        char altAA = getAA(altCodon.toUpperCase());
+                        String mutType = getMutationType(refAA,altAA);
+                        out.print( curAnnot.getNucleotideSeq().charAt( posInGene ) + "\t"+posInCodon+"\t"+codonStart+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getNucleotideSeq() );
 
                     } else {
-                            out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
-                            out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t");
-                            int posInGene = curAnnot.getStart()-curVar.getPosition();
-                            int posInCodon = posInGene%3;
-                            int codonStart = posInGene-posInCodon;
-                            String codon = curAnnot.getNucleotideSeq().substring(codonStart,codonStart+3).toUpperCase();
-                            String altCodon = getAlternativeCodon(codon, posInCodon, curVar.getAlternative(), curAnnot.getStrand()).toUpperCase();
-                            char refAA = getAA(codon);
-                            char altAA = getAA(altCodon);
-                            String mutType = getMutationType(refAA,altAA);
-                            out.print( curAnnot.getNucleotideSeq().charAt( posInGene ) + "\t"+posInCodon+"\t"+codonStart+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getNucleotideSeq() );
+                        out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
+                        out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t");
+                        int posInGene = curAnnot.getStart()-curVar.getPosition();
+                        int posInCodon = posInGene%3;
+                        int codonStart = posInGene-posInCodon;
+                        String codon = curAnnot.getNucleotideSeq().substring(codonStart,codonStart+3).toUpperCase();
+                        String altCodon = getAlternativeCodon(codon, posInCodon, curVar.getAlternative(), curAnnot.getStrand()).toUpperCase();
+                        char refAA = getAA(codon);
+                        char altAA = getAA(altCodon);
+                        String mutType = getMutationType(refAA,altAA);
+                        out.print( curAnnot.getNucleotideSeq().charAt( posInGene ) + "\t"+posInCodon+"\t"+codonStart+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getNucleotideSeq() );
                     }
-                }else{
-                    //intergenic
+                }
+            }
+
+            if(!isIntragenic){
+                Annotation prevAnnot = null;
+                for(Annotation curAnnot: annotList) {
+                    if ( curAnnot.getContig().equals( curVar.getContig() ) ) {
+                        if (curAnnot.getStart() > curVar.getPosition()) {
+                            out.print("\t"+"na");
+
+                            int startSeq;
+                            if( !prevAnnot.getContig().equals(curAnnot.getContig()) ){
+                                startSeq = 0;
+                            }else{
+                                startSeq = getFwdDirectionStart(prevAnnot)-1;
+                            }
+                            int endSeq = getFwdDirectionEnd(curAnnot);
+
+                            int distanceToPrev;
+                            if(!prevAnnot.getContig().equals(curAnnot.getContig())) {
+                                distanceToPrev = curVar.getPosition();
+                            }else{
+                                distanceToPrev = curVar.getPosition() - getFwdDirectionEnd(prevAnnot);
+                            }
+                            int distanceToNext = getFwdDirectionStart(curAnnot)-curVar.getPosition();
+
+                            String type;
+                            if(( distanceToPrev<=REG_REGION && prevAnnot.getStrand()=='-' )&&( distanceToNext<=REG_REGION && curAnnot.getStrand()=='+' )){
+                                type = "RGB";
+                            }else if( distanceToPrev<=REG_REGION && prevAnnot.getStrand()=='-' ){
+                                type = "RGP";
+                            }else if( distanceToNext<=REG_REGION && curAnnot.getStrand()=='+' ) {
+                                type = "RGN";
+                            }else{
+                                type = "INT";
+                            }
+
+                            String nucleotideSeq = reference.get( curVar.getContig()).substring( startSeq, endSeq);
+                            Integer pos = curVar.getPosition()-startSeq-1;
+
+                            out.print("\t" + (startSeq+1) +"\t"+endSeq+"\t");
+                            out.print("\t" + curVar.getReference()+"\t"+curVar.getAlternative()+"\t"+"na"+"\t"+"na");
+                            out.print("\t" + pos +"\t"+"na"+"\t"+"na"+"\t"+"na"+"\t"+"na"+"\t"+type);
+                            out.print("\t" + nucleotideSeq );
+                            out.print("\t" + distanceToPrev +"\t"+ prevAnnot.getStrand());
+                            out.print("\t" + distanceToNext +"\t"+ curAnnot.getStrand());
+                            break;
+                        }
+                    }
+                    prevAnnot = curAnnot;
                 }
             }
             out.println();
@@ -60,6 +134,22 @@ public class ExtractSNPInfoFromRast {
         out.close();
 
 
+    }
+
+    public static int getFwdDirectionStart(Annotation previous){
+        if ( previous.getStart()>previous.getStop() ) {
+            return previous.getStop();
+        }else{
+            return previous.getStart();
+        }
+    }
+
+    public static int getFwdDirectionEnd(Annotation next){
+        if ( next.getStart()>next.getStop() ) {
+            return next.getStart();
+        }else{
+            return next.getStop();
+        }
     }
 
     public static String getMutationType( char refAA, char altAA ){
