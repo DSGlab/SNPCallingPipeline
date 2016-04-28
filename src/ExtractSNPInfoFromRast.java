@@ -29,30 +29,46 @@ import java.util.Scanner;
  */
 public class ExtractSNPInfoFromRast {
 
+    private static Integer REG_REGION = 150;
+
     public static void main (String[] args) throws FileNotFoundException {
+        /*
+         * The 
+         */
         String ANNOT_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.txt";
+
+        /*
+         *
+         */
         String VAR_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/variants.txt";
+
+        /*
+         *
+         */
         String REF_CONTIGS = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
+
+        /*
+         *
+         */
         String OUT_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNP_annot.txt";
 
-        Integer REG_REGION = 150;
 
         ArrayList<Annotation> annotList = getAnnotations(ANNOT_FILE);
         ArrayList<Variant> varList = getVariants(VAR_FILE);
         LinkedHashMap<String, String> reference = new FastaPrinter(new File(REF_CONTIGS)).getSequences();
 
-        PrintWriter out = new PrintWriter( OUT_FILE );
-        out.println("CONTIG\tPOSITION\tSTRAND\tSTART_ANNOT\tEND_ANNOT\t\tREF\tALT\tREF (in annot)\tCODON_POS (0 index)\t" +
-                "POS_IN_GENE (o index)\tREF_CODON\tALT_CODON\tREF_AA\tALT_AA\tTYPE\tDNA");
+        //PrintWriter out = new PrintWriter( OUT_FILE );
+        System.out.println("CONTIG\tPOSITION\tSTRAND\tSTART_ANNOT\tEND_ANNOT\t\tREF\tALT\tREF (in annot)\tCODON_POS (0 index)\t" +
+                "CODON_START (o index)\tREF_CODON\tALT_CODON\tREF_AA\tALT_AA\tTYPE\tDNA");
         for( Variant curVar : varList ){
             Boolean isIntragenic = false;
-            out.print( curVar.getContig() + "\t" + curVar.getPosition() );
+            System.out.print( curVar.getContig() + "\t" + curVar.getPosition() );
             for( Annotation curAnnot : annotList ){
                 if ( isVariantInAnnotation( curVar, curAnnot ) ) {
                     isIntragenic = true;
                     if (curAnnot.getStrand() == '+') {
-                        out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
-                        out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t" );
+                        System.out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
+                        System.out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t" );
                         int posInGene = curVar.getPosition()-curAnnot.getStart();
                         int posInCodon = posInGene%3;
                         int codonStart = posInGene-posInCodon;
@@ -61,11 +77,11 @@ public class ExtractSNPInfoFromRast {
                         char refAA = getAA(codon.toUpperCase());
                         char altAA = getAA(altCodon.toUpperCase());
                         String mutType = getMutationType(refAA,altAA);
-                        out.print( curAnnot.getNucleotideSeq().charAt( posInGene ) + "\t"+posInCodon+"\t"+codonStart+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getNucleotideSeq() );
+                        System.out.print( curAnnot.getNucleotideSeq().charAt( posInGene ) + "\t"+posInCodon+"\t"+posInGene+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getFeature()+"\t"+curAnnot.getFunction() );
 
                     } else {
-                        out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
-                        out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t");
+                        System.out.print("\t"+curAnnot.getStrand() + "\t" + curAnnot.getStart() + "\t" + curAnnot.getStop() + "\t");
+                        System.out.print( "\t" + curVar.getReference() + "\t" + curVar.getAlternative() + "\t");
                         int posInGene = curAnnot.getStart()-curVar.getPosition();
                         int posInCodon = posInGene%3;
                         int codonStart = posInGene-posInCodon;
@@ -74,7 +90,7 @@ public class ExtractSNPInfoFromRast {
                         char refAA = getAA(codon);
                         char altAA = getAA(altCodon);
                         String mutType = getMutationType(refAA,altAA);
-                        out.print( curAnnot.getNucleotideSeq().charAt( posInGene ) + "\t"+posInCodon+"\t"+codonStart+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getNucleotideSeq() );
+                        System.out.print( curAnnot.getNucleotideSeq().charAt( posInGene )+ "\t"+posInCodon+"\t"+posInGene+"\t"+codon+"\t"+altCodon+"\t"+refAA+"\t"+altAA+"\t"+mutType+"\t"+curAnnot.getFeature()+"\t"+curAnnot.getFunction() );
                     }
                 }
             }
@@ -84,7 +100,7 @@ public class ExtractSNPInfoFromRast {
                 for(Annotation curAnnot: annotList) {
                     if ( curAnnot.getContig().equals( curVar.getContig() ) ) {
                         if (curAnnot.getStart() > curVar.getPosition()) {
-                            out.print("\t"+"na");
+                            System.out.print("\t"+"na");
 
                             int startSeq;
                             if( !prevAnnot.getContig().equals(curAnnot.getContig()) ){
@@ -116,25 +132,35 @@ public class ExtractSNPInfoFromRast {
                             String nucleotideSeq = reference.get( curVar.getContig()).substring( startSeq, endSeq);
                             Integer pos = curVar.getPosition()-startSeq-1;
 
-                            out.print("\t" + (startSeq+1) +"\t"+endSeq+"\t");
-                            out.print("\t" + curVar.getReference()+"\t"+curVar.getAlternative()+"\t"+"na"+"\t"+"na");
-                            out.print("\t" + pos +"\t"+"na"+"\t"+"na"+"\t"+"na"+"\t"+"na"+"\t"+type);
-                            out.print("\t" + nucleotideSeq );
-                            out.print("\t" + distanceToPrev +"\t"+ prevAnnot.getStrand());
-                            out.print("\t" + distanceToNext +"\t"+ curAnnot.getStrand());
+                            System.out.print("\t" + (startSeq+1) +"\t"+endSeq+"\t");
+                            System.out.print("\t" + curVar.getReference()+"\t"+curVar.getAlternative()+"\t"+"na"+"\t"+"na");
+                            System.out.print("\t" + pos +"\t"+"na"+"\t"+"na"+"\t"+"na"+"\t"+"na"+"\t"+type);
+                            //System.out.print("\t" + nucleotideSeq );
+
+                            if(type.equals("RGP") || type.equals("RGB")){
+                                System.out.print("\t"+prevAnnot.getFeature()+"\t"+prevAnnot.getFunction()) ;
+                            }
+                            if(type.equals("RGN") || type.equals("RGB")){
+                                System.out.print("\t"+curAnnot.getFeature()+"\t"+curAnnot.getFunction());
+                            }
+
+                            //System.out.print("\t" + distanceToPrev +"\t"+ prevAnnot.getStrand());
+                            //System.out.print("\t" + distanceToNext +"\t"+ curAnnot.getStrand());
                             break;
                         }
                     }
                     prevAnnot = curAnnot;
                 }
             }
-            out.println();
+            System.out.println();
         }
 
-        out.close();
+        //out.close();
 
 
     }
+
+
 
     public static int getFwdDirectionStart(Annotation previous){
         if ( previous.getStart()>previous.getStop() ) {
