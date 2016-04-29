@@ -25,14 +25,19 @@ public class FastaPrinter {
         this.seqLength = 60;
     }
 
-    public FastaPrinter ( File file ) {
+    public FastaPrinter (File file) {
+        this(file,true);
+    }
+    public FastaPrinter ( File file, Boolean quiet ) {
         this();
 
         LinkedHashMap<String, DNASequence> contigs = null;
         try {
             contigs = FastaReaderHelper.readFastaDNASequence( file );
         } catch (Exception e) {
-            System.err.println( "ERROR\t" + file +  " IS NOT IN FASTA FORMAT OR IT DOES NOT EXIST." );
+            if (quiet) {
+                System.err.println("ERROR\t" + file + " IS NOT IN FASTA FORMAT OR IT DOES NOT EXIST.");
+            }
             //e.printStackTrace();
         }
         //THIS SHOULD GO AWAY BECAUSE VALUES SHOULD BE DNASequence
