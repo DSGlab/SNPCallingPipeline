@@ -125,7 +125,7 @@ public class Utilities {
      * @return
      */
     public static ArrayList<String> getRange(int start, int end){
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<String>();
 
         for(int i=start; i<=end; i++){
             result.add(i+"");
