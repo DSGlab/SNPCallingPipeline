@@ -42,7 +42,7 @@ public class SNPIdentityFromBlast {
         String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/tbd.txt";
 
 
-        process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);
+        //process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);
 
         LinkedHashMap<String, Variant> variants = getVariants( VARIANT_FILE );
         for(String id : IDS_ARRAY){

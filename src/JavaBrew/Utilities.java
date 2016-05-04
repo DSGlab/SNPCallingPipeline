@@ -8,7 +8,7 @@ import java.util.Hashtable;
 /**
  * Created by juliofdiaz on 4/28/16.
  *
- * Class only filled with useful methods
+ * Class only filled with useful methods and variables
  */
 public class Utilities {
 
