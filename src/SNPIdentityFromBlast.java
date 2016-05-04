@@ -36,6 +36,13 @@ public class SNPIdentityFromBlast {
          */
         ArrayList<String> IDS_ARRAY = Utilities.getRange(1,1936);
 
+        /*
+         *
+         */
+        String OUT_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_annotation/tbd.txt";
+
+
+        process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);
 
         LinkedHashMap<String, Variant> variants = getVariants( VARIANT_FILE );
         for(String id : IDS_ARRAY){
@@ -185,12 +192,20 @@ public class SNPIdentityFromBlast {
         return main;
     }
 
-
+    /**
+     *
+     *
+     * @param base      The input base to be tested.
+     * @param strand    The direction of the strand
+     * @return          If the strand is '+' or 'n', the it returns the same
+     *                  base. If the base is '-', then it returns the complement.
+     */
     private static char properStrand(char base, char strand){
         if(strand=='+' || strand=='n'){
             return base;
         }else{
-            if(base=='A'){
+            return Utilities.getComplementaryBase(base);
+/*          if(base=='A'){
                 return 'T';
             }else if(base=='T'){
                 return 'A';
@@ -203,9 +218,20 @@ public class SNPIdentityFromBlast {
             }else{
                 return 'N';
             }
+*/
         }
     }
 
+    /**
+     * This method is aimed at find the position of the homoologous position
+     * of the variant in the contig that holds the hit.
+     *
+     * @param hit   The hit where we find the homologous position from the
+     *              variant.
+     * @param pos   The position where we find the variant in the annotation.
+     * @return      The position where we find the homologous position in
+     *              the contig of the hit.
+     */
     private static int getPosInVariantContig(MViewHits hit, int pos){
         int start;
         if( hit.getStart()>hit.getStop() ){
@@ -216,14 +242,31 @@ public class SNPIdentityFromBlast {
         return start+pos;
     }
 
+    /**
+     * This method turns the information of a list of Hits in a String.
+     *
+     * @param hits  The hits whose information is to be returned.
+     * @param pos   The position of the variant in the hits.
+     * @return      The information of al the input hits, including the base at
+     *              the variant position in the hit.
+     */
     private static String printAllHits(ArrayList<MViewHits>hits, int pos){
         String result = "";
         for(MViewHits tempHit:hits){
-            result = result+tempHit.getContig()+","+(tempHit.getStart()+pos)+","+tempHit.getStart()+","+tempHit.getStop()+","+pos+","+tempHit.getNucleotide().charAt(pos)+";";
+            result = result+tempHit.getContig()+","+(tempHit.getStart()+pos)+","+
+                    tempHit.getStart()+","+tempHit.getStop()+","+pos+","+
+                    tempHit.getNucleotide().charAt(pos)+";";
         }
         return result;
     }
 
+    /**
+     * Ideally this method should compare all the hits and return the MViewHits
+     * that is the best hit for the query.
+     *
+     * @param hits  A list of all the hits to be compared.
+     * @return      The best hit.
+     */
     private static MViewHits getBestHit( ArrayList<MViewHits> hits ){
         Double highestBitScore = 0.0;
         MViewHits bitScoreHit = new MViewHits();
@@ -249,6 +292,9 @@ public class SNPIdentityFromBlast {
         return null;
     }
 
+    /**
+     * The class holds all the output information.
+     */
     private static class BlastMatch{
         private String variantId;
         private String variantContig;
@@ -472,7 +518,7 @@ public class SNPIdentityFromBlast {
      * @param fileName  The name of the fasta formatted blast result. This file
      *                  name should be in the format $id"-mview.fa where $i is
      *                  the isolate id.
-     * @return
+     * @return          The MView object retrieved from the mview fasta file.
      */
     private static MViewObject getMViewObject( String fileName ){
         MViewObject result = new MViewObject();

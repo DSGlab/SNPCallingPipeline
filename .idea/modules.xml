@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JavaBrew/JavaBrew.iml" filepath="$PROJECT_DIR$/JavaBrew/JavaBrew.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SNP_Pipeline.iml" filepath="$PROJECT_DIR$/SNP_Pipeline.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SNPCallingPipeline.iml" filepath="$PROJECT_DIR$/SNPCallingPipeline.iml" />
     </modules>
   </component>
 </project>
+
