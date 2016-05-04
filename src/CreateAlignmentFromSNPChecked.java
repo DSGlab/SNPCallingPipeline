@@ -125,11 +125,11 @@ public class CreateAlignmentFromSNPChecked {
     }
 
     /**
-     * This method sorts items first by contig and then by position in contig.
+     * This method sorts items first by contig and then by position in contig. This
+     * method needs to be better annotated.
      *
      * @param ref reference
      * @return LinkedHashMap the list of sorted reference items
-     * @note This method needs to be better annotated
      */
     private static LinkedHashMap<String,String> sortReferenceItems ( LinkedHashMap<String,String> ref ) {
         LinkedHashMap<String,String> result = new LinkedHashMap<String, String>();

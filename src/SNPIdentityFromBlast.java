@@ -17,12 +17,12 @@ public class SNPIdentityFromBlast {
         /*
          * The file containing the variant file.
          */
-        String VARIANT_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_annotation/variants.txt";
+        String VARIANT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/variants.txt";
 
         /*
          * The prefix of the mview files. It may include the directory.
          */
-        String MVIEW_FILE_PREFIX = "/Users/juliofdiaz/Dropbox/CF/snp_annotation/";
+        String MVIEW_FILE_PREFIX = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/";
 
         /*
          * The suffix of the mview files. This could be changed but for
@@ -39,7 +39,7 @@ public class SNPIdentityFromBlast {
         /*
          *
          */
-        String OUT_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_annotation/tbd.txt";
+        String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/tbd.txt";
 
 
         process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);

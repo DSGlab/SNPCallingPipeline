@@ -13,6 +13,11 @@ import java.util.Hashtable;
 public class Utilities {
 
     /**
+     *
+     */
+    public static final String HOME_PATH = System.getProperty("user.home");
+
+    /**
      * This method takes a base ('A', 'T', 'G' or 'C') and it returns the
      * complement base.
      *
@@ -119,10 +124,11 @@ public class Utilities {
     }
 
     /**
-     *
-     * @param start
-     * @param end
-     * @return
+     * This method return a range of numbers as a list of Strings. This could be useful
+     * when looping through isolates with a numerical ID.
+     * @param start The beginning of the range.
+     * @param end   The end of the range.
+     * @return      The range of numbers as a list of Strings.
      */
     public static ArrayList<String> getRange(int start, int end){
         ArrayList<String> result = new ArrayList<String>();
