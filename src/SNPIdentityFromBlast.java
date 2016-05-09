@@ -3,6 +3,7 @@ import JavaBrew.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -31,65 +32,92 @@ public class SNPIdentityFromBlast {
         String MVIEW_FILE_SUFFIX = "_mview.fa";
 
         /*
-         * The list of ids to be assesed. If the ids are in a numerical
+         * The list of ids to be assessed. If the ids are in a numerical
          * range, then the static getRange() method can be used
          */
         ArrayList<String> IDS_ARRAY = Utilities.getRange(1,1936);
 
         /*
-         *
+         * The location and name of the file where the output will be printed.
          */
         String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/tbd.txt";
 
 
-        //process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);
-
-        LinkedHashMap<String, Variant> variants = getVariants( VARIANT_FILE );
-        for(String id : IDS_ARRAY){
-            String curFile = MVIEW_FILE_PREFIX + id + MVIEW_FILE_SUFFIX;
-            BlastMatch result = new BlastMatch();
-
-            /* THE result OBJECT IS THE ONE HOLDING THE DESIRED INFORMATION*/
-            result = work( variants.get( id ), getMViewObject( curFile ) );
-
-            /* START OF PRINTING INFORMATION OF BLAST RESULT */
-            System.out.print(result.getVariantId()+"\t");
-            System.out.print(result.getVariantContig()+"\t");
-            System.out.print(result.getVariantPos()+"\t");
-            System.out.print(result.getVariantStrand()+"\t");
-            System.out.print(result.getHitQueryStart()+"\t");
-            System.out.print(result.getHitQueryStop()+"\t");
-            System.out.print(result.getVariantPosInNucleotideSeq()+"\t");
-            System.out.print(result.getVariantRef()+"\t");
-            System.out.print(result.getHitContig()+"\t");
-
-
-            //GOOD BUT 1 INDEXED. APPROXIMATE
-            if(result.getHitStrand()=='+') {
-                System.out.print( ( result.getHitStart() + result.getVariantHomologousPos() ) + "\t");
-            }else {
-                System.out.print( ( result.getHitStart() - result.getVariantHomologousPos() )+"\t");
-            }
-
-            System.out.print(result.getHitStrand()+"\t");
-            System.out.print(result.getHitStart()+"\t");
-            System.out.print(result.getHitStop()+"\t");
-            System.out.print(result.getVariantHomologousPos()+"\t");
-            System.out.print(result.getVariantHomologousBase()+"\t");
-            System.out.println(result.getNote());
-
-            /* END OF PRINTING INFORMATION */
-        }
-
+        process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);
 
     }
 
     /**
      *
      *
-     * @param var the variant
-     * @param mViewObject the mview object
-     * @return
+     * @param varFile           The location of the file with the variant information.
+     * @param mviewFilePrefix   The directory where the mview files is located.
+     * @param mviewFileSuffix   The text after the isolate id of the mview file.
+     * @param idsArray          The list of variant ids in this analysis.
+     * @param outFile           The location and file name of the output file.
+     * @throws FileNotFoundException
+     */
+    public static void process(String varFile, String mviewFilePrefix, String mviewFileSuffix,
+                               ArrayList<String> idsArray, String outFile ) throws FileNotFoundException {
+
+        PrintWriter out = new PrintWriter(outFile);
+
+        out.println("MULTIPLE_HITS:hit contig, hit pos, hit start in contig, hit end in contig," +
+                " homologous pos in hit, homologous base in hit, bitscore, evalue;NEXT HIT");
+        out.println("ID\tCONTIG\tPOS\tVAR STRAND\tQUERY START\tQUERY END\tPOS (0 index)\t" +
+                "REF BASE\tHIT CONTIG\tHIT POS (1 indexed, approx)\tHIT STRAND\tHIT START IN CONTIG\t" +
+                "HIT END IN CONTIG\tHOMOLOGOUS POS IN HIT (0 index)\tHOMOLOGOUS BASE IN HIT\tNOTE");
+
+        LinkedHashMap<String, Variant> variants = getVariants( varFile );
+        for (String id : idsArray) {
+            String curFile = mviewFilePrefix + id + mviewFileSuffix;
+            BlastMatch result = new BlastMatch();
+
+            /* THE result OBJECT IS THE ONE HOLDING THE DESIRED INFORMATION*/
+            result = work(variants.get(id), getMViewObject(curFile));
+
+            /* START OF PRINTING INFORMATION OF BLAST RESULT */
+            out.print(result.getVariantId() + "\t");
+            out.print(result.getVariantContig() + "\t");
+            out.print(result.getVariantPos() + "\t");
+            out.print(result.getVariantStrand() + "\t");
+            out.print(result.getHitQueryStart() + "\t");
+            out.print(result.getHitQueryStop() + "\t");
+            out.print(result.getVariantPosInNucleotideSeq() + "\t");
+            out.print(result.getVariantRef() + "\t");
+            out.print(result.getHitContig() + "\t");
+
+
+            //GOOD BUT 1 INDEXED. APPROXIMATE
+            if (result.getHitStrand() == '+') {
+                out.print((result.getHitStart() + result.getVariantHomologousPos()) + "\t");
+            } else {
+                out.print((result.getHitStart() - result.getVariantHomologousPos()) + "\t");
+            }
+
+            out.print(result.getHitStrand() + "\t");
+            out.print(result.getHitStart() + "\t");
+            out.print(result.getHitStop() + "\t");
+            out.print(result.getVariantHomologousPos() + "\t");
+            out.print(result.getVariantHomologousBase() + "\t");
+            out.println(result.getNote());
+
+            /* END OF PRINTING INFORMATION */
+        }
+
+        out.close();
+    }
+
+    /**
+     * This program takes a variant and the respective blast hit of its annotation
+     * and it returns a BlastMatch object with the proper information about the hit
+     * and the respective information about the homologous base and position of the variant.
+     *
+     * @param var           The variant object.
+     * @param mViewObject   The mview object.
+     * @return              The resulting object encapsulating the information about
+     *                      the blast hit an the respective homologous positions to the
+     *                      variant.
      */
     private static BlastMatch work( Variant var, MViewObject mViewObject  ){
         BlastMatch main = new BlastMatch();
@@ -193,7 +221,8 @@ public class SNPIdentityFromBlast {
     }
 
     /**
-     *
+     * This method complements a base if the reference is in the '-' strand or
+     * leaves it as is if the strand is '+' or if the location is intergenic ('n').
      *
      * @param base      The input base to be tested.
      * @param strand    The direction of the strand
@@ -205,25 +234,11 @@ public class SNPIdentityFromBlast {
             return base;
         }else{
             return Utilities.getComplementaryBase(base);
-/*          if(base=='A'){
-                return 'T';
-            }else if(base=='T'){
-                return 'A';
-            }else if (base=='G'){
-                return 'C';
-            }else if(base=='C'){
-                return 'G';
-            }else if(base=='-'){
-                return '-';
-            }else{
-                return 'N';
-            }
-*/
         }
     }
 
     /**
-     * This method is aimed at find the position of the homoologous position
+     * This method is aimed at find the position of the homologous position
      * of the variant in the contig that holds the hit.
      *
      * @param hit   The hit where we find the homologous position from the
@@ -253,9 +268,17 @@ public class SNPIdentityFromBlast {
     private static String printAllHits(ArrayList<MViewHits>hits, int pos){
         String result = "";
         for(MViewHits tempHit:hits){
-            result = result+tempHit.getContig()+","+(tempHit.getStart()+pos)+","+
-                    tempHit.getStart()+","+tempHit.getStop()+","+pos+","+
-                    tempHit.getNucleotide().charAt(pos)+";";
+            result = result+tempHit.getContig()+",";
+
+            if (tempHit.getStrand() == '+') {
+                result = result+(tempHit.getStart() + pos);
+            } else {
+                result = result+(tempHit.getStart() - pos);
+            }
+
+            result = result+","+tempHit.getStart()+","+tempHit.getStop()+","+pos+","+
+                     tempHit.getNucleotide().charAt(pos)+","+tempHit.getBitscore()+
+                     ","+tempHit.geteValue()+";";
         }
         return result;
     }
