@@ -37,24 +37,23 @@ public class ExtractSNPInfoFromRast {
         /*
          *
          */
-        String ANNOT_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.txt";
+        String ANNOT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/references/B6CQ.txt";
 
         /*
          * The file containing information about the variants
          */
-        String VAR_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/variants.txt";
+        String VAR_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_calling/CF170_NEW/variants.txt";
 
         /*
          * The reference assembly contigs in a fasta format
          */
-        String REF_CONTIGS = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
+        String REF_CONTIGS = Utilities.HOME_PATH+"/Dropbox/CF/references/B6CQ.fa";
 
         /*
          * The name of the output file containing the information of the
          * annotations with variants.
          */
-        String OUT_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNP_annot.txt";
-        OUT_FILE = "/Users/juliofdiaz/Downloads/tbd.txt";
+        String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_calling/CF170_NEW/SNP_annot.txt";
 
         /*
          * Here, the files are processed and the output is created
@@ -79,8 +78,8 @@ public class ExtractSNPInfoFromRast {
         LinkedHashMap<String, String> reference = new FastaPrinter(new File( refContigs )).getSequences();
 
         PrintWriter out = new PrintWriter( outFile );
-        out.println("CONTIG\tPOSITION\tSTRAND\tSTART_ANNOT\tEND_ANNOT\tREF\tALT\tREF (in annot)\tCODON_POS (0 index)\t" +
-                "POS_IN_ANNOT (o index)\tREF_CODON\tALT_CODON\tREF_AA\tALT_AA\tTYPE\tDNA");
+        out.println("CONTIG\tPOSITION\tSTRAND\tSTART ANNOT\tEND ANNOT\tREF\tALT\tREF (in annot)\tPOS IN CODON (0 index)\t" +
+                "POS IN ANNOT (0 index)\tREF CODON\tALT CODON\tREF AA\tALT AA\tTYPE\tDNA");
 
         for (Variant curVar : varList) {
             work(curVar, annotList, reference, out);
