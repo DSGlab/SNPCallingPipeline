@@ -23,7 +23,7 @@ public class Utilities {
      *
      * @param base  The base to be complemented. Only valid for inputs 'A',
      *              'T', 'G', 'C' or 'N'
-     * @return      The complemente base of the input base. Input 'A' would
+     * @return      The complemented base of the input base. Input 'A' would
      *              return 'T'. Input 'T' would return 'A'. Input 'G' would
      *              return 'C'. Input 'C' would return 'G'. Any other input
      *              would return 'N'
