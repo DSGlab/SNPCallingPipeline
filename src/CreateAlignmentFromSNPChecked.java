@@ -20,7 +20,8 @@ public class CreateAlignmentFromSNPChecked {
     private static final String CONTIG_POS_SEPARATOR = "-";
 
     public static void main (String[] args) throws FileNotFoundException {
-        String SNP_CHECKED_FILE =  "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNPChecked_BWA.txt";
+        //String SNP_CHECKED_FILE =  "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNPChecked_BWA.txt";
+        String SNP_CHECKED_FILE =  "/Users/juliofdiaz/Dropbox/CF/indel_calling/CF170_NEW/IndelChecked_BWA.txt";
         LinkedHashMap<String, ArrayList<VCFVariant>> variants = getVariantsByParentId(SNP_CHECKED_FILE);
         LinkedHashMap <String, String> ref = getReference( getAllVariants(SNP_CHECKED_FILE) );
         for( String isol : variants.keySet() ){
