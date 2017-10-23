@@ -2,8 +2,11 @@ package JavaBrew;
 
 import org.jetbrains.annotations.Contract;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 /**
  * Created by juliofdiaz on 4/28/16.
@@ -11,6 +14,15 @@ import java.util.Hashtable;
  * Class only filled with useful methods and variables
  */
 public class Utilities {
+    public static final String CONF_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/conf.txt";
+    public static final String REPLICON_POS_SEPARATOR = "-";
+    public static final String ID_LABEL_SEPARATOR = "_";
+    public static final String DIR_SEPARATOR = "/";
+    public static final String VCF_NAME = "r.vcf";
+    public static final String SEPARATOR = "\t";
+
+    public static final String FASTA_START = ">";
+    public static final String REFERENCE_DEFAULT_NAME = "reference";
 
     /**
      *
@@ -126,6 +138,7 @@ public class Utilities {
     /**
      * This method return a range of numbers as a list of Strings. This could be useful
      * when looping through isolates with a numerical ID.
+     *
      * @param start The beginning of the range.
      * @param end   The end of the range.
      * @return      The range of numbers as a list of Strings.
@@ -136,6 +149,43 @@ public class Utilities {
         for(int i=start; i<=end; i++){
             result.add(i+"");
         }
+        return result;
+    }
+
+    /**
+     *
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static Hashtable<String, String> getConfigurationTable(String optionTable)
+            throws FileNotFoundException {
+        Scanner in = new Scanner(new File(optionTable));
+        Hashtable<String,String> result = new Hashtable<String, String>();
+        while(in.hasNextLine()){
+            String line = in.nextLine();
+            if(!line.isEmpty()) {
+                if (line.charAt(0) != '#') {
+                    String[] line2 = line.split("=");
+                    result.put(line2[0].trim(), line2[1].trim());
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param input
+     * @return
+     */
+    public static String[] getIds(String input) throws FileNotFoundException {
+        Scanner in = new Scanner(new File(input));
+        ArrayList<String> preList= new ArrayList<String>();
+        while(in.hasNextLine()){
+            preList.add(in.nextLine().trim());
+        }
+
+        String [] result = preList.toArray(new String[preList.size()]);
         return result;
     }
 

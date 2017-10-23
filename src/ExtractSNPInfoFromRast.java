@@ -331,7 +331,7 @@ public class ExtractSNPInfoFromRast {
     /**
      * This class can hold information about variants.
      */
-    private static class Variant {
+    static class Variant {
         private String id;
         private String contig;
         private Integer position;
@@ -436,7 +436,7 @@ public class ExtractSNPInfoFromRast {
     /**
      * This class can hold information about annotations.
      */
-    private static class Annotation {
+    static class Annotation {
         private String contig;
         private String feature;
         private String type;

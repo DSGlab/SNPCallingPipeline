@@ -2,9 +2,15 @@
   <dictionary name="juliofdiaz">
     <words>
       <w>bitscore</w>
+      <w>contigs</w>
       <w>dropbox</w>
       <w>evalue</w>
+      <w>fasta</w>
+      <w>hqsn</w>
+      <w>indels</w>
+      <w>intraclonal</w>
       <w>juliofdiaz</w>
+      <w>novoalign</w>
     </words>
   </dictionary>
 </component>

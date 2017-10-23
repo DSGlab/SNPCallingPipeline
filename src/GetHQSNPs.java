@@ -1,7 +1,10 @@
 import JavaBrew.FastaPrinter;
+import JavaBrew.Utilities;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
 /**
@@ -21,62 +24,65 @@ import java.util.LinkedHashMap;
  *
  */
 public class GetHQSNPs {
-    private static final String DIR_SEPARATOR = "/";
-    private static final String SUFFIX = "/r.vcf";
+    private static final String CONF_FILE = Utilities.CONF_FILE;
+    private static final String DIR_SEPARATOR = Utilities.DIR_SEPARATOR;
+    private static final String VCF_NAME = Utilities.VCF_NAME;
 
+    private static final String BWA_STRING = "BWA";
+    private static final String NOVOALIGN_STRING = "NOVOALIGN";
+    private static final String LAST_STRING = "LAST";
+    private static final String ID_COR_MODIFIER = "-COR";
+    private static final String ID_LABEL_SEPARATOR = Utilities.ID_LABEL_SEPARATOR;
+
+    private static final String ID_LIST_FILE_STRING = "ID_LIST_FILE";
+    private static final String HQ_SNP_LIST_OUTPUT_STRING = "HQ_SNP_LIST_OUTPUT";
+    private static final String HQ_SNP_WORKING_DIR_STRING = "HQ_SNP_WORKING_DIR";
+    private static final String REF_FILE_STRING = "REF_FILE";
+    private static final String INCLUDE_PRE_QC_STRING = "INCLUDE_PRE_QC";
+
+    private static final String HQ_SNP_QUALITY_STRING = "HQ_SNP_QUALITY";
+    private static final String HQ_SNP_DEPTH_STRING = "HQ_SNP_DEPTH";
+    private static final String HQ_SNP_DIST_TO_CONTIG_END_STRING = "HQ_SNP_DIST_TO_CONTIG_END";
+    private static final String HQ_SNP_READ_BALANCE_STRING = "HQ_SNP_READ_BALANCE";
+    private static final String HQ_SNP_REF_TO_ALT_BALANCE_STRING = "HQ_SNP_REF_TO_ALT_BALANCE";
+    private static final String HQ_SNP_CLUSTER_SIZE_STRING = "HQ_SNP_CLUSTER_SIZE";
+    private static final String HQ_SNP_REQUIRED_NUM_STRING = "HQ_SNP_REQUIRED_NUM";
 
     public static void main ( String[] args ) throws Exception {
+        Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
         ArrayList<String> snpPositions = new ArrayList<String>();
 
-        //First Set of data from CF170
-        //String[] ids = {"1","2","3","4","5","6C","7","8","9","10","11","12C","13","14","15","16","17","18","19","20"};
-        //String[] ids = {"1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j"};
-        //String[] ids = {"1c","1d","1e","1f","1g","1h","1i","1j","2c","2d","2e","2f","2g","2h","2i","2j","3c","3d","3e","3f","3g","3h","3i","3j","4c","4d","4e","4f","4g","4h","4i","4j","5c","5d","5e","5f","5g","5h","5i","5j","6c","6d","6e","6f","6g","6h","6i","6j","7c","7d","7e","7f","7g","7h","7i","7j","8c","8d","8e","8f","8g","8h","8i","8j","9c","9d","9e","9f","9g","9h","9i","9j","10c","10d","10e","10f","10g","10h","10i","10j"};
-        String[] ids = {"0a","1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j","3a","3b","3c","3d","3e","3f","3g","3h","3i","3j","4a","4b","4c","4d","4e","4f","4g","4h","4i","4j","5a","5b","5c","5d","5e","5f","5g","5h","5i","5j","6a","6b","6c","6d","6e","6f","6g","6h","6i","6j","7a","7b","7c","7d","7e","7f","7g","7h","7i","7j","8a","8b","8c","8d","8e","8f","8g","8h","8i","8j","9a","9b","9c","9d","9e","9f","9g","9h","9i","9j","10a","10b","10c","10d","10e","10f","10g","10h","10i","10j","11a","11b","11c","11d","11e","11f","11g","11h","11i","11j"};
+        /* We look for HQ SNPs in the isolates with the following ids */
+        String[] IDS = Utilities.getIds(options.get( ID_LIST_FILE_STRING ));
+        /* The list of HQ SNPs will be found in the following file */
+        String OUTPUT = options.get( HQ_SNP_LIST_OUTPUT_STRING );
+        /* The directory where the folders containing the vcf files are found */
+        String WORKING_DIR = checkDir(options.get( HQ_SNP_WORKING_DIR_STRING ));
+        /* The reference genome in fasta file */
+        String REF_FILE = options.get( REF_FILE_STRING );
+        /* True if results from non-qc reads are to be included  */
+        Boolean INCLUDE_PRE_QC = Boolean.valueOf(options.get( INCLUDE_PRE_QC_STRING ));
 
-        for( String id : ids ) {
-            //System.out.println("\t"+id);
-            //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF67_C71/");
-            //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/C71.fa";
+        System.out.println("1. Acquiring list of HQ SNPs.");
 
-            //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_B6CQ/");
-            //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
+        PrintWriter out = new PrintWriter( OUTPUT );
+        for( String id : IDS ) {
+            System.out.println("\tTesting:\t"+id);
 
-            //String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/");
-            //String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/8f.fa";
-
-            String WORKING_DIR = checkDir("/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/");
-            String REF_FILE = "/Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa";
-
-
-            ArrayList<String> temp = run(REF_FILE, WORKING_DIR, id, SUFFIX);
+             ArrayList<String> temp = run(REF_FILE, WORKING_DIR, id, VCF_NAME, options, INCLUDE_PRE_QC);
 
             for ( String t : temp ) {
                 if ( !snpPositions.contains(t) ) {
                     snpPositions.add(t);
-                    System.out.println( t );
+                    out.println( t );
                 }
             }
         }
+        out.close();
 
-        System.out.println( snpPositions.size() );
-    }
-
-    /**
-     * This is a debugging method that allows to print the HQ SNPs.
-     *
-     * @param refFile the path and name of the file containing the reference in fasta file
-     * @param workingDir the working directory where the vcf file are located
-     * @param id the identifier of the isolate
-     * @param suffix the suffix of the file of each vcf file ( e.g. ".vcf" )
-     * @throws Exception
-     */
-    public static void printOnScreen ( String refFile, String workingDir, String id, String suffix )
-            throws Exception {
-        ArrayList<String> snps = run(refFile, workingDir, id, suffix);
-        for ( String s : snps ) {
-            System.out.println(s);
-        }
+        System.out.println( "2. Num. of HQ SNP:\t"+snpPositions.size() );
+        System.out.println( "3. List of HQ SNPs was written in: " + OUTPUT );
+        System.out.println();
     }
 
     /**
@@ -89,74 +95,86 @@ public class GetHQSNPs {
      * @param workingDir the working directory where the vcf file are located
      * @param id the identifier of the isolate
      * @param suffix the suffix of the file of each vcf file ( e.g. ".vcf" )
-     * @throws Exception
+     * @throws Exception issues with file reading or writing
      * @note The ArrayList should eventually hold VCFVariants
      */
-    private static ArrayList<String> run ( String refFile, String workingDir, String id, String suffix )
+    private static ArrayList<String> run ( String refFile, String workingDir, String id, String suffix,
+                                           Hashtable<String,String> options, Boolean includePreQc)
             throws Exception {
+        /* Obtain settings for HQ SNP calling */
+        Integer MIN_QUALITY = Integer.parseInt( options.get( HQ_SNP_QUALITY_STRING ) );
+        Integer MIN_DEPTH = Integer.parseInt( options.get( HQ_SNP_DEPTH_STRING ) );
+        Integer MIN_EDGE_DISTANCE = Integer.parseInt( options.get( HQ_SNP_DIST_TO_CONTIG_END_STRING ) );
+        Integer MIN_READ_BALANCE = Integer.parseInt( options.get( HQ_SNP_READ_BALANCE_STRING ) );
+        Double MIN_REF_TO_ALT_RATIO = Double.parseDouble( options.get( HQ_SNP_REF_TO_ALT_BALANCE_STRING ) );
+        Integer CLUSTER_SIZE = Integer.parseInt( options.get( HQ_SNP_CLUSTER_SIZE_STRING ) );
+        Integer ALIGNERS_NUM = Integer.parseInt( options.get( HQ_SNP_REQUIRED_NUM_STRING ) );
+
         ArrayList<String> result = new ArrayList<String>();
         File file = new File( refFile );
         FastaPrinter ref = new FastaPrinter( file );
 
-        String[] varFiles = {
-                              workingDir + id + "_BWA" + suffix,
-                              //workingDir + id + "-COR_BWA" + suffix,
-                              workingDir + id + "_LAST" + suffix,
-                              //workingDir + id + "-COR_LAST" + suffix,
-                              workingDir + id + "_NOVOALIGN" + suffix,
-                              //workingDir + id + "-COR_NOVOALIGN" + suffix
-                            };
+        /* Setting list of vcf files to include in the analysis */
+        String[] varFiles;
+        if(!includePreQc) {
+            varFiles = new String[]{
+                    workingDir + id + ID_LABEL_SEPARATOR + BWA_STRING + DIR_SEPARATOR + suffix,
+                    workingDir + id + ID_LABEL_SEPARATOR + LAST_STRING + DIR_SEPARATOR + suffix,
+                    workingDir + id + ID_LABEL_SEPARATOR + NOVOALIGN_STRING + DIR_SEPARATOR + suffix
+            };
+        }else {
+            varFiles = new String[]{
+                    workingDir + id + ID_LABEL_SEPARATOR + BWA_STRING + DIR_SEPARATOR + suffix,
+                    workingDir + id + ID_COR_MODIFIER + ID_LABEL_SEPARATOR + BWA_STRING + DIR_SEPARATOR + suffix,
+                    workingDir + id + ID_LABEL_SEPARATOR + LAST_STRING + DIR_SEPARATOR + suffix,
+                    workingDir + id + ID_COR_MODIFIER + ID_LABEL_SEPARATOR + LAST_STRING + DIR_SEPARATOR + suffix,
+                    workingDir + id + ID_LABEL_SEPARATOR + NOVOALIGN_STRING + DIR_SEPARATOR + suffix,
+                    workingDir + id + ID_COR_MODIFIER + ID_LABEL_SEPARATOR + NOVOALIGN_STRING + DIR_SEPARATOR + suffix
+            };
+        }
+
         LinkedHashMap<String, ArrayList<VCFVariant>> main = VCFHolderMap.getVariantsMap(varFiles);
 
         /* Here we filter out the variants whose quality is lower than threshold */
-        main = VCFHolderMap.qualityFilterVariantsMap(main, 30);
+        main = VCFHolderMap.qualityFilterVariantsMap(main, MIN_QUALITY);
 
-
+        /* Sanity check */
         for ( String key : main.keySet() ) {
             for(VCFVariant temp: main.get(key)){
-                if( temp.getQuality() < 30 ) {
+                if( temp.getQuality() < MIN_QUALITY ) {
                     System.out.println(temp.getQuality()+"what is this?");
                 }
             }
         }
 
-
         /* Here we filter out the variants whose sequencing depth is lower than threshold */
-        main = VCFHolderMap.qualityDepthFilterVariantsMap(main, 20);
-
+        main = VCFHolderMap.qualityDepthFilterVariantsMap(main, MIN_DEPTH);
         /* Here we filter out the variants that are closer to the contig ends than threshold */
-        main = VCFHolderMap.contigEndFilterVariantsMap(main, ref, 250);
-
+        main = VCFHolderMap.contigEndFilterVariantsMap(main, ref, MIN_EDGE_DISTANCE);
         /* Here we filter out the variants that are covered unevenly by the forward and reverse reads */
-        main = VCFHolderMap.readBalanceFilterVariantsMap(main, 3);
-
+        main = VCFHolderMap.readBalanceFilterVariantsMap(main, MIN_READ_BALANCE);
         /* Here we filter out the variants where sufficient reads support the reference */
-        main = VCFHolderMap.refToAltRatioFilterVariantsMap(main, 0.2);
-
+        main = VCFHolderMap.refToAltRatioFilterVariantsMap(main, MIN_REF_TO_ALT_RATIO);
         /*  Here we filter out the variants that are clustered too close*/
-        main = VCFHolderMap.clusterFilterVariantsMap(main, 15);
-
+        main = VCFHolderMap.clusterFilterVariantsMap(main, CLUSTER_SIZE);
 
         /* Loops through each position that reports a variant */
         for ( String key : main.keySet()) {
-
             /* Ensures that position actually reports variant. IOW, variants were not pruned by filtering steps */
             if ( main.get(key).size() != 0 ) {
-
                 /* Filters out positions reporting variants where the reference includes "N" */
                 if ( !main.get(key).get(0).isReferenceN() ) {
-
                      /* Filters out indels */
                     if ( !main.get(key).get(0).isIndel() ) {
-
-                        /* Filters out positins that are not reported by all the methods */
-                        if ( main.get(key).size() == 3 ) {
+                        /* Filters out positions that are not reported by all the methods */
+                        if ( main.get(key).size() == ALIGNERS_NUM ) {
                             result.add(key);
                         }
                     }
                 }
             }
         }
+
         return result;
     }
 
