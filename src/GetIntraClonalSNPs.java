@@ -21,7 +21,7 @@ import java.util.Scanner;
  * @author juliofdiazc
  */
 public class GetIntraClonalSNPs {
-    private static final String CONF_FILE = Utilities.CONF_FILE;
+    //private static final String CONF_FILE = Utilities.CONF_FILE;
     private static final String DIR_SEPARATOR = Utilities.DIR_SEPARATOR;
     private static final String VCF_NAME = Utilities.VCF_NAME;
 
@@ -36,7 +36,8 @@ public class GetIntraClonalSNPs {
     private static final String INTRA_SNP_OUTPUT_STRING = "INTRA_SNP_OUTPUT";
 
     public static void main ( String[] args ) throws Exception {
-        Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        //Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        Hashtable<String,String> options = Utilities.getConfigurationTable(args[0]);
 
         /* We look for SNPs only among the isolates with the following ids */
         String[] IDS = Utilities.getIds(options.get( ID_LIST_FILE_STRING ));

@@ -12,7 +12,7 @@ import java.util.Scanner;
  *
  */
 public class SNPFilter {
-    private static final String CONF_FILE = Utilities.CONF_FILE;
+    //private static final String CONF_FILE = Utilities.CONF_FILE;
 
     private static final String DIR_SEPARATOR = Utilities.DIR_SEPARATOR;
     private static final String ID_LABEL_SEPARATOR= Utilities.ID_LABEL_SEPARATOR;
@@ -26,7 +26,8 @@ public class SNPFilter {
     private static final String SNP_FILTER_MIN_GOOD_QUALITY_STRING = "SNP_FILTER_MIN_GOOD_QUALITY";
 
     public static void main(String[] args) throws FileNotFoundException {
-        Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        //Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        Hashtable<String,String> options = Utilities.getConfigurationTable(args[0]);
 
         /* The inout file for this step */
         String INPUT = options.get( SNP_FILTER_INPUT_STRING );

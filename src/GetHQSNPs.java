@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
  *
  */
 public class GetHQSNPs {
-    private static final String CONF_FILE = Utilities.CONF_FILE;
+    //private static final String CONF_FILE = Utilities.CONF_FILE;
     private static final String DIR_SEPARATOR = Utilities.DIR_SEPARATOR;
     private static final String VCF_NAME = Utilities.VCF_NAME;
 
@@ -49,7 +49,8 @@ public class GetHQSNPs {
     private static final String HQ_SNP_REQUIRED_NUM_STRING = "HQ_SNP_REQUIRED_NUM";
 
     public static void main ( String[] args ) throws Exception {
-        Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        //Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        Hashtable<String,String> options = Utilities.getConfigurationTable(args[0]);
         ArrayList<String> snpPositions = new ArrayList<String>();
 
         /* We look for HQ SNPs in the isolates with the following ids */

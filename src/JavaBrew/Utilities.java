@@ -14,7 +14,8 @@ import java.util.Scanner;
  * Class only filled with useful methods and variables
  */
 public class Utilities {
-    public static final String CONF_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/conf.txt";
+    //public static final String CONF_FILE = "/Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/conf.txt";
+    public static final String DEFAULT_CONF_NAME = "conf.txt";
     public static final String REPLICON_POS_SEPARATOR = "-";
     public static final String ID_LABEL_SEPARATOR = "_";
     public static final String DIR_SEPARATOR = "/";
@@ -153,13 +154,15 @@ public class Utilities {
     }
 
     /**
+     * This method retrieves the configuration file
      *
-     * @return
-     * @throws FileNotFoundException
+     * @param optionTable the configuration file
+     * @return the table with the options in the configuration table
      */
     public static Hashtable<String, String> getConfigurationTable(String optionTable)
             throws FileNotFoundException {
         Scanner in = new Scanner(new File(optionTable));
+
         Hashtable<String,String> result = new Hashtable<String, String>();
         while(in.hasNextLine()){
             String line = in.nextLine();
@@ -174,9 +177,10 @@ public class Utilities {
     }
 
     /**
+     * This method retrieves ids written in a file.
      *
-     * @param input
-     * @return
+     * @param input file with the ids
+     * @return a string array with the ids recovered from the file
      */
     public static String[] getIds(String input) throws FileNotFoundException {
         Scanner in = new Scanner(new File(input));
@@ -185,8 +189,7 @@ public class Utilities {
             preList.add(in.nextLine().trim());
         }
 
-        String [] result = preList.toArray(new String[preList.size()]);
-        return result;
+        return preList.toArray(new String[preList.size()]);
     }
 
 }

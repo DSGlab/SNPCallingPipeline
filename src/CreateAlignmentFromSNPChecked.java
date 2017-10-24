@@ -18,7 +18,7 @@ import java.util.*;
  *  @author juliofdiazc
  */
 public class CreateAlignmentFromSNPChecked {
-    private static final String CONF_FILE = Utilities.CONF_FILE;
+    //private static final String CONF_FILE = Utilities.CONF_FILE;
 
     private static final String FASTA_START = Utilities.FASTA_START;
     private static final String REF_HEADER = FASTA_START + Utilities.REFERENCE_DEFAULT_NAME;
@@ -31,13 +31,18 @@ public class CreateAlignmentFromSNPChecked {
     private static final String CREATE_ALIGN_LIST_OUTPUT_STRING = "CREATE_ALIGN_LIST_OUTPUT";
 
     public static void main (String[] args) throws FileNotFoundException {
-        Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        //Hashtable<String,String> options = Utilities.getConfigurationTable(CONF_FILE);
+        Hashtable<String,String> options = Utilities.getConfigurationTable(args[0]);
 
         //String SNP_CHECKED_FILE =  "/Users/juliofdiaz/Dropbox/CF/snp_calling/CF170_NEW/SNPChecked_BWA.txt";
         //String SNP_CHECKED_FILE =  "/Users/juliofdiaz/Dropbox/CF/indel_calling/CF170_NEW/IndelChecked_BWA.txt";
+        /* */
         String INPUT =  options.get( CREATE_ALIGN_INPUT_STRING );//"/Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPFiltered_BWA.txt";
 
+        /* */
         String OUTPUT = options.get( CREATE_ALIGN_OUTPUT_STRING );//"/Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPAlignment.fa";
+
+        /* */
         String OUTPUT_LIST = options.get( CREATE_ALIGN_LIST_OUTPUT_STRING );//"/Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/FinalSNPList.txt";
 
         /* */
