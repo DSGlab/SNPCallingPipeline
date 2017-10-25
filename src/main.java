@@ -53,6 +53,10 @@ public class main {
                     System.out.println("Starting Create_Alignment analysis.");
                     CreateAlignmentFromSNPChecked.main(input);
                     break;
+                case scinetjobcreator:
+                    System.out.println("Starting Create_Alignment analysis.");
+                    CreateAlignerJobs.main(input);
+                    break;
                 default:
                     System.out.println("\nwhat are you doing here?\n");
                     break;
@@ -63,6 +67,6 @@ public class main {
     }
 
     public enum Analysis{
-        gethqsnps, getintraclonalsnps, snpchecker, snpfilter, createalignment
+        gethqsnps, getintraclonalsnps, snpchecker, snpfilter, createalignment, scinetjobcreator
     }
 }
