@@ -1,0 +1,52 @@
+REF_FILE = /Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa
+ID_LIST_FILE = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/id_list.txt
+ALIGNER = BWA
+
+# Settings for sinetjobcreator
+# novoindex reference_NOVOALIGN reference.fa
+# lastdb reference_LAST reference.fa
+INPUT_DIR = /Users/juliofdiaz/Dropbox/CF/sequencing/TEST
+ALIGNMENT_DIR = /Users/juliofdiaz/Dropbox/CF/alignment/TEST
+JOBS_DIR = /Users/juliofdiaz/Dropbox/CF/scinet/TEST
+INCLUDE_QUAKE = TRUE	
+INCLUDE_BWA = TRUE
+INCLUDE_LAST = TRUE
+INCLUDE_NOVOALIGN = TRUE
+INCLUDE_BOWTIE2 = FALSE
+BWA_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa
+NOVOALIGN_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ_NOVOALIGN
+LAST_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ_LAST
+
+# Settings for gethqsnps
+HQ_SNP_LIST_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/list_jar.txt
+HQ_SNP_WORKING_DIR = /Users/juliofdiaz/Documents/conrad/
+HQ_SNP_QUALITY = 30
+HQ_SNP_DEPTH = 20
+HQ_SNP_DIST_TO_CONTIG_END = 250
+HQ_SNP_READ_BALANCE = 3
+HQ_SNP_REF_TO_ALT_BALANCE = 0.2
+HQ_SNP_CLUSTER_SIZE = 15
+HQ_SNP_REQUIRED_NUM = 3
+INCLUDE_PRE_QC = FALSE
+
+# Settings for getintraclonalsnps
+INTRA_SNP_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/list.txt
+INTRA_SNP_WORKING_DIR = /Users/juliofdiaz/Documents/conrad/
+INTRA_SNP_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/IntraSNPList.txt
+
+# Settings for snpchecker
+SNP_CHECKER_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/CONRAD/IntraSNPList.txt
+SNP_CHECKER_WORKING_DIR = /Users/juliofdiaz/Documents/conrad/
+SNP_CHECKER_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPChecked_BWA.txt
+
+# Settings for snpfilter
+SNP_FILTER_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPChecked_BWA.txt
+SNP_FILTER_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPFiltered_BWA_2.txt
+SNP_FILTER_MIN_GOOD_BALANCE = 1
+SNP_FILTER_MIN_GOOD_CALL_RATIO = 0.8
+SNP_FILTER_MIN_GOOD_QUALITY = 25
+
+# Settings for createalignment
+CREATE_ALIGN_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPFiltered_BWA.txt
+CREATE_ALIGN_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPAlignment.fa
+CREATE_ALIGN_LIST_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/FinalSNPList.txt
