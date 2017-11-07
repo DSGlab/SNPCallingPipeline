@@ -5,6 +5,8 @@ ALIGNER = BWA
 # Settings for sinetjobcreator
 # novoindex reference_NOVOALIGN reference.fa
 # lastdb reference_LAST reference.fa
+# bwa index reference.fa
+# samtools faidx reference.fa
 INPUT_DIR = /Users/juliofdiaz/Dropbox/CF/sequencing/TEST
 ALIGNMENT_DIR = /Users/juliofdiaz/Dropbox/CF/alignment/TEST
 JOBS_DIR = /Users/juliofdiaz/Dropbox/CF/scinet/TEST
