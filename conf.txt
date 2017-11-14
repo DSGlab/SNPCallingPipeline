@@ -2,11 +2,9 @@ REF_FILE = /Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa
 ID_LIST_FILE = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/id_list.txt
 ALIGNER = BWA
 
-# Settings for sinetjobcreator
+# Settings for scinetjobcreator
 # novoindex reference_NOVOALIGN reference.fa
 # lastdb reference_LAST reference.fa
-# bwa index reference.fa
-# samtools faidx reference.fa
 INPUT_DIR = /Users/juliofdiaz/Dropbox/CF/sequencing/TEST
 ALIGNMENT_DIR = /Users/juliofdiaz/Dropbox/CF/alignment/TEST
 JOBS_DIR = /Users/juliofdiaz/Dropbox/CF/scinet/TEST
@@ -20,35 +18,41 @@ NOVOALIGN_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ_NOVOALIGN
 LAST_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ_LAST
 
 # Settings for gethqsnps
-HQ_SNP_LIST_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/list_jar.txt
-HQ_SNP_WORKING_DIR = /Users/juliofdiaz/Documents/conrad/
+HQ_SNP_LIST_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/LIST/OF/HQ_SNPS
+HQ_SNP_WORKING_DIR = /PATH/TO/DIRECTORY/CONTAINING/ALIGNMENT/DATA
+# Minimum phred quality score to be deemed a HQ SNP
 HQ_SNP_QUALITY = 30
+# Minimum number of reads supporting a variant to be deemed a HQ SNP
 HQ_SNP_DEPTH = 20
+# Minimum distance required from a replicon end to be deeemed a HQ SNP
 HQ_SNP_DIST_TO_CONTIG_END = 250
+# Minimum number of reads required for each forward and reverse reads
 HQ_SNP_READ_BALANCE = 3
-HQ_SNP_REF_TO_ALT_BALANCE = 0.2
-HQ_SNP_CLUSTER_SIZE = 15
+#  Minimum number of aligners supporting variant
 HQ_SNP_REQUIRED_NUM = 3
 INCLUDE_PRE_QC = FALSE
 
 # Settings for getintraclonalsnps
-INTRA_SNP_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/list.txt
-INTRA_SNP_WORKING_DIR = /Users/juliofdiaz/Documents/conrad/
-INTRA_SNP_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/IntraSNPList.txt
+INTRA_SNP_INPUT = /PATH/AND/NAME/OF/FILE/WITH/LIST/OF/HQ_SNPS
+INTRA_SNP_WORKING_DIR = /PATH/TO/DIRECTORY/CONTAINING/ALIGNMENT/DATA
+INTRA_SNP_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/NEW/LIST/OF/HQ_SNPS
 
 # Settings for snpchecker
-SNP_CHECKER_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/CONRAD/IntraSNPList.txt
-SNP_CHECKER_WORKING_DIR = /Users/juliofdiaz/Documents/conrad/
-SNP_CHECKER_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPChecked_BWA.txt
+SNP_CHECKER_INPUT = /PATH/AND/NAME/OF/FILE/WITH/NEW/LIST/OF/HQ_SNPS
+SNP_CHECKER_WORKING_DIR = /PATH/TO/DIRECTORY/CONTAINING/ALIGNMENT/DATA
+SNP_CHECKER_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/VARIANT/INFORMATION
 
 # Settings for snpfilter
-SNP_FILTER_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPChecked_BWA.txt
-SNP_FILTER_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPFiltered_BWA_2.txt
+SNP_FILTER_INPUT = /PATH/AND/NAME/OF/FILE/WITH/VARIANT/INFORMATION
+SNP_FILTER_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/FILTERED/VARIANTS
+# Minimum number of reads required for each forward and reverse reads
 SNP_FILTER_MIN_GOOD_BALANCE = 1
+# Minimum ratio of reads supporting variant or reference
 SNP_FILTER_MIN_GOOD_CALL_RATIO = 0.8
+# Minimum phred quality score to pass filter
 SNP_FILTER_MIN_GOOD_QUALITY = 25
 
 # Settings for createalignment
-CREATE_ALIGN_INPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPFiltered_BWA.txt
-CREATE_ALIGN_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/SNPAlignment.fa
-CREATE_ALIGN_LIST_OUTPUT = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/FinalSNPList.txt
+CREATE_ALIGN_INPUT = /PATH/AND/NAME/OF/FILE/WITH/FILTERED/VARIANTS
+CREATE_ALIGN_OUTPUT = /PATH/AND/NAME/OF/SNP/ALIGNMENT/FASTA/FILE
+CREATE_ALIGN_LIST_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/ORDERED/LIST/OF/SNPS
