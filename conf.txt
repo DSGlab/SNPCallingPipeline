@@ -1,58 +1,54 @@
-REF_FILE = /Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa
-ID_LIST_FILE = /Users/juliofdiaz/Dropbox/CF/snp_calling/TEST/id_list.txt
+REF_FILE = /scratch/d/dguttman/cizydor/POOOOPS/reference/3b.fa
+ID_LIST_FILE = /scratch/d/dguttman/cizydor/POOOOPS/id_list.txt
 ALIGNER = BWA
 
-# Settings for scinetjobcreator
+# Settings for sinetjobcreator
 # novoindex reference_NOVOALIGN reference.fa
 # lastdb reference_LAST reference.fa
-INPUT_DIR = /Users/juliofdiaz/Dropbox/CF/sequencing/TEST
-ALIGNMENT_DIR = /Users/juliofdiaz/Dropbox/CF/alignment/TEST
-JOBS_DIR = /Users/juliofdiaz/Dropbox/CF/scinet/TEST
+# bwa index reference.fa
+# samtools faidx reference.fa
+INPUT_DIR = /scratch/d/dguttman/cizydor/POOOOPS/sequencing/seqData_BU_CoNrAd
+ALIGNMENT_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignment_dir
+JOBS_DIR = /scratch/d/dguttman/cizydor/POOOOPS/jobs_dir
 INCLUDE_QUAKE = TRUE	
 INCLUDE_BWA = TRUE
 INCLUDE_LAST = TRUE
 INCLUDE_NOVOALIGN = TRUE
 INCLUDE_BOWTIE2 = FALSE
-BWA_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ.fa
-NOVOALIGN_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ_NOVOALIGN
-LAST_REF = /Users/juliofdiaz/Dropbox/CF/references/B6CQ_LAST
+BWA_REF = /scratch/d/dguttman/cizydor/POOOOPS/reference/3b.fa
+NOVOALIGN_REF = /scratch/d/dguttman/cizydor/POOOOPS/reference/3b_NOVOALIGN
+LAST_REF = /scratch/d/dguttman/cizydor/POOOPS/reference/3b_last
 
 # Settings for gethqsnps
-HQ_SNP_LIST_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/LIST/OF/HQ_SNPS
-HQ_SNP_WORKING_DIR = /PATH/TO/DIRECTORY/CONTAINING/ALIGNMENT/DATA
-# Minimum phred quality score to be deemed a HQ SNP
+HQ_SNP_LIST_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/hq_snps_list.txt
+HQ_SNP_WORKING_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignments_diaz
 HQ_SNP_QUALITY = 30
-# Minimum number of reads supporting a variant to be deemed a HQ SNP
 HQ_SNP_DEPTH = 20
-# Minimum distance required from a replicon end to be deeemed a HQ SNP
 HQ_SNP_DIST_TO_CONTIG_END = 250
-# Minimum number of reads required for each forward and reverse reads
 HQ_SNP_READ_BALANCE = 3
-#  Minimum number of aligners supporting variant
+HQ_SNP_REF_TO_ALT_BALANCE = 0.2
+HQ_SNP_CLUSTER_SIZE = 15
 HQ_SNP_REQUIRED_NUM = 3
 INCLUDE_PRE_QC = FALSE
 
 # Settings for getintraclonalsnps
-INTRA_SNP_INPUT = /PATH/AND/NAME/OF/FILE/WITH/LIST/OF/HQ_SNPS
-INTRA_SNP_WORKING_DIR = /PATH/TO/DIRECTORY/CONTAINING/ALIGNMENT/DATA
-INTRA_SNP_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/NEW/LIST/OF/HQ_SNPS
+INTRA_SNP_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/hq_snps_list.txt
+INTRA_SNP_WORKING_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignments_diaz
+INTRA_SNP_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/intraclonal_snps_list.txt
 
 # Settings for snpchecker
-SNP_CHECKER_INPUT = /PATH/AND/NAME/OF/FILE/WITH/NEW/LIST/OF/HQ_SNPS
-SNP_CHECKER_WORKING_DIR = /PATH/TO/DIRECTORY/CONTAINING/ALIGNMENT/DATA
-SNP_CHECKER_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/VARIANT/INFORMATION
+SNP_CHECKER_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/intraclonal_snps_list.txt
+SNP_CHECKER_WORKING_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignments_diaz
+SNP_CHECKER_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/checked_snps.txt
 
 # Settings for snpfilter
-SNP_FILTER_INPUT = /PATH/AND/NAME/OF/FILE/WITH/VARIANT/INFORMATION
-SNP_FILTER_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/FILTERED/VARIANTS
-# Minimum number of reads required for each forward and reverse reads
+SNP_FILTER_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/checked_snps.txt
+SNP_FILTER_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/filtered_snps.txt
 SNP_FILTER_MIN_GOOD_BALANCE = 1
-# Minimum ratio of reads supporting variant or reference
 SNP_FILTER_MIN_GOOD_CALL_RATIO = 0.8
-# Minimum phred quality score to pass filter
 SNP_FILTER_MIN_GOOD_QUALITY = 25
 
 # Settings for createalignment
-CREATE_ALIGN_INPUT = /PATH/AND/NAME/OF/FILE/WITH/FILTERED/VARIANTS
-CREATE_ALIGN_OUTPUT = /PATH/AND/NAME/OF/SNP/ALIGNMENT/FASTA/FILE
-CREATE_ALIGN_LIST_OUTPUT = /PATH/AND/NAME/OF/FILE/WITH/ORDERED/LIST/OF/SNPS
+CREATE_ALIGN_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/filtered_snps.txt
+CREATE_ALIGN_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_alignment.fa
+CREATE_ALIGN_LIST_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/final_snp_list.txt
