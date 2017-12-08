@@ -74,7 +74,8 @@ public class SNPChecker {
             //String snpList ="/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/SNPList.txt";
             //String vcf = "/Users/juliofdiaz/Dropbox/CF/snp_calling/DOLOSA_V21-INTRA/" + i + "_BWA/r.vcf";
 
-            String vcf = WORKING_DIR + i + ID_LABEL_SEPARATOR + ALIGNER + DIR_SEPARATOR + VCF_NAME;
+            String vcf = WORKING_DIR + "/" + ALIGNER + "-" + i + DIR_SEPARATOR + VCF_NAME;
+            //String vcf = WORKING_DIR + i + ID_LABEL_SEPARATOR + ALIGNER + DIR_SEPARATOR + VCF_NAME;
 
             ArrayList<String> checkedList = getVCFVariantSubset( INPUT, vcf );
             for(String item: checkedList){

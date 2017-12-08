@@ -119,18 +119,18 @@ public class GetHQSNPs {
         String[] varFiles;
         if(!includePreQc) {
             varFiles = new String[]{
-                    workingDir + id + ID_LABEL_SEPARATOR + BWA_STRING + DIR_SEPARATOR + suffix,
-                    workingDir + id + ID_LABEL_SEPARATOR + LAST_STRING + DIR_SEPARATOR + suffix,
-                    workingDir + id + ID_LABEL_SEPARATOR + NOVOALIGN_STRING + DIR_SEPARATOR + suffix
+                    workingDir + BWA_STRING + "-" + id + DIR_SEPARATOR + suffix,
+                    workingDir + LAST_STRING + "-" + id + DIR_SEPARATOR + suffix,
+                    workingDir + NOVOALIGN_STRING + "-" + id + DIR_SEPARATOR + suffix
             };
         }else {
             varFiles = new String[]{
-                    workingDir + id + ID_LABEL_SEPARATOR + BWA_STRING + DIR_SEPARATOR + suffix,
-                    workingDir + id + ID_COR_MODIFIER + ID_LABEL_SEPARATOR + BWA_STRING + DIR_SEPARATOR + suffix,
-                    workingDir + id + ID_LABEL_SEPARATOR + LAST_STRING + DIR_SEPARATOR + suffix,
-                    workingDir + id + ID_COR_MODIFIER + ID_LABEL_SEPARATOR + LAST_STRING + DIR_SEPARATOR + suffix,
-                    workingDir + id + ID_LABEL_SEPARATOR + NOVOALIGN_STRING + DIR_SEPARATOR + suffix,
-                    workingDir + id + ID_COR_MODIFIER + ID_LABEL_SEPARATOR + NOVOALIGN_STRING + DIR_SEPARATOR + suffix
+                    workingDir + BWA_STRING + "-" + id + DIR_SEPARATOR + suffix,
+                    workingDir + BWA_STRING + "-" + "COR" + "_" + id + DIR_SEPARATOR + suffix,
+                    workingDir + LAST_STRING + "-" + id + DIR_SEPARATOR + suffix,
+                    workingDir + LAST_STRING + "=" + "COR" + "_" + id + DIR_SEPARATOR + suffix,
+                    workingDir + NOVOALIGN_STRING + "-" + id + DIR_SEPARATOR + suffix,
+                    workingDir + NOVOALIGN_STRING + "-" + "COR" + "_" + id + DIR_SEPARATOR + suffix
             };
         }
 

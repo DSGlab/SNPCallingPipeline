@@ -33,50 +33,50 @@ public class createBwaJobs{
 
         /* Set corrected or non corrected reads */
         String COR_EXTENSION = "";
-	String COR_ID = "";
+		String COR_ID = "";
         if(isQuakeCorrected){
             COR_EXTENSION = ".cor";
-	    COR_ID = "COR_";
+	    	COR_ID = "COR_";
         }
 
         String ISOLATE_DIR = "BWA-"+COR_ID+ISOLATE_ID+"/";
-	PrintWriter out = new PrintWriter(JOBS_DIR+"/"+"bwa-"+COR_ID+ISOLATE_ID+".sh");
+		PrintWriter out = new PrintWriter(JOBS_DIR+"/"+"bwa-"+COR_ID+ISOLATE_ID+".sh");
 
-	/*Create Folder where the data will be saved*/
-	new File(OUTPUT_DIR+ISOLATE_DIR).mkdirs();
-	
-	/* Header required for scinet */
-	out.println("#!/bin/bash");                                                                           
-	out.println("#MOAB/Torque submission script for Multiple Serial Jobs");                                              
-	out.println("#PBS -l nodes=2:ppn=8,walltime=6:00:00");                                              
-	out.println("#PBS -N serialx8");                                                               
-	out.println("module load gnu-parallel\n");
-	out.println("module load bwa");
-	out.println("module load samtools");
-	out.println("module load bcftools");
-	
-        /* The actual alignment */
-	out.println("bwa aln "+ALIGNER_REF+" "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq > "+OUTPUT_DIR+ISOLATE_DIR+"rOne.sai");
-	out.println("bwa aln "+ALIGNER_REF+" "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq > "+OUTPUT_DIR+ISOLATE_DIR+"rTwo.sai");
-	out.println("bwa sampe "+ALIGNER_REF+" "+OUTPUT_DIR+ISOLATE_DIR+"rOne.sai "+OUTPUT_DIR+ISOLATE_DIR+"rTwo.sai "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq > "+OUTPUT_DIR+ISOLATE_DIR+"r.sam" );
-	out.println("rm "+OUTPUT_DIR+ISOLATE_DIR+"rOne.sai");
-	out.println("rm "+OUTPUT_DIR+ISOLATE_DIR+"rTwo.sai\n");
-	
-	out.println("## SAM FILE IS CONVERTED INTO BINARY FORM ##");                                                  
-	out.println("samtools view -bS "+OUTPUT_DIR+ISOLATE_DIR+"r.sam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bam");
-	out.println("## SORT BAM FILE FOR ##");                                                       
-	out.println("samtools sort "+OUTPUT_DIR+ISOLATE_DIR+"r.bam "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted");
-	out.println("## REMOVE r.sam FILE ##");
-	//out.println("rm "+MAINDIR+ISOLATE+"/r.sam");
-	//out.println("rm "+MAINDIR+ISOLATE+"/r.bam\n");
-		
-	out.println("## CREATE LIST OF POTENTIAL SNP OR INDEL ##");                                                      
-	out.println("samtools mpileup -uf "+REFERENCE+" "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted.bam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf");
-	out.println("## PARSE POTENTIAL SNP OR INDEL USING BAYESIAN INFERENCE ##");                         
-	out.println("bcftools view -bvcg "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf");
-	out.println("## BCF FILE IS CONVERTED VIEWABLE FORM ##");                                          
-	out.println("bcftools view "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r.vcf");
-	out.close();
+		/*Create Folder where the data will be saved*/
+		new File(OUTPUT_DIR+ISOLATE_DIR).mkdirs();
+
+		/* Header required for scinet */
+		out.println("#!/bin/bash");
+		out.println("#MOAB/Torque submission script for Multiple Serial Jobs");
+		out.println("#PBS -l nodes=2:ppn=8,walltime=18:00:00");
+		out.println("#PBS -N serialx8");
+		out.println("module load gnu-parallel\n");
+		out.println("module load bwa");
+		out.println("module load samtools");
+		out.println("module load bcftools");
+
+			/* The actual alignment */
+		out.println("bwa aln "+ALIGNER_REF+" "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq > "+OUTPUT_DIR+ISOLATE_DIR+"rOne.sai");
+		out.println("bwa aln "+ALIGNER_REF+" "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq > "+OUTPUT_DIR+ISOLATE_DIR+"rTwo.sai");
+		out.println("bwa sampe "+ALIGNER_REF+" "+OUTPUT_DIR+ISOLATE_DIR+"rOne.sai "+OUTPUT_DIR+ISOLATE_DIR+"rTwo.sai "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq > "+OUTPUT_DIR+ISOLATE_DIR+"r.sam" );
+		out.println("rm "+OUTPUT_DIR+ISOLATE_DIR+"rOne.sai");
+		out.println("rm "+OUTPUT_DIR+ISOLATE_DIR+"rTwo.sai\n");
+
+		out.println("## SAM FILE IS CONVERTED INTO BINARY FORM ##");
+		out.println("samtools view -bS "+OUTPUT_DIR+ISOLATE_DIR+"r.sam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bam");
+		out.println("## SORT BAM FILE FOR ##");
+		out.println("samtools sort "+OUTPUT_DIR+ISOLATE_DIR+"r.bam "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted");
+		out.println("## REMOVE r.sam FILE ##");
+		//out.println("rm "+MAINDIR+ISOLATE+"/r.sam");
+		//out.println("rm "+MAINDIR+ISOLATE+"/r.bam\n");
+
+		out.println("## CREATE LIST OF POTENTIAL SNP OR INDEL ##");
+		out.println("samtools mpileup -uf "+REFERENCE+" "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted.bam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf");
+		out.println("## PARSE POTENTIAL SNP OR INDEL USING BAYESIAN INFERENCE ##");
+		out.println("bcftools view -bvcg "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf");
+		out.println("## BCF FILE IS CONVERTED VIEWABLE FORM ##");
+		out.println("bcftools view "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r.vcf");
+		out.close();
     }
 
     private static String checkDirString(String inputDir){

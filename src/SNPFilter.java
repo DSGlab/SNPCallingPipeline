@@ -49,7 +49,7 @@ public class SNPFilter {
         PrintWriter out = new PrintWriter(OUTPUT);
         while(in.hasNextLine()){
             String[] data = in.nextLine().split(SEPARATOR);
-            String isolate = data[0].split(DIR_SEPARATOR)[5].split(ID_LABEL_SEPARATOR)[0];
+            String isolate = data[0].split(DIR_SEPARATOR)[data[0].split(DIR_SEPARATOR).length-2].split("-")[1];
             String replicon = data[1];
             String position = data[2];
             String reference = data[3];

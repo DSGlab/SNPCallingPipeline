@@ -102,7 +102,8 @@ public class GetIntraClonalSNPs {
         LinkedHashMap<String, VCFHolder> snpCalls = new LinkedHashMap<String, VCFHolder>();
 
         for ( String id: ids ) {
-            VCFHolder vcfh = new VCFHolder(prefix + id + ID_LABEL_SEPARATOR + aligner + DIR_SEPARATOR + suffix);
+            VCFHolder vcfh = new VCFHolder(prefix + "/" + aligner + "-" + id + DIR_SEPARATOR + suffix);
+            //VCFHolder vcfh = new VCFHolder(prefix + id + ID_LABEL_SEPARATOR + aligner + DIR_SEPARATOR + suffix);
             snpCalls.put(id, vcfh);
         }
         return snpCalls;

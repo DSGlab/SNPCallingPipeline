@@ -83,29 +83,29 @@ public class CreateAlignerJobs {
      */
     private static void isStringFile(String inString){
 
-	boolean isFileFound = false;
-    //System.out.println(inString);
-	File testFile = new File(inString);
-	String testFileName = testFile.getName();
-	File parentFile = testFile.getParentFile();
-	File [] listOfFiles = parentFile.listFiles();
+	    boolean isFileFound = false;
+        //System.out.println(inString);
+	    File testFile = new File(inString);
+	    String testFileName = testFile.getName();
+	    File parentFile = testFile.getParentFile();
+	    File [] listOfFiles = parentFile.listFiles();
 
-	for(File curFile:listOfFiles){
-	    String curFileName = curFile.getName();
-	    if( curFileName.length() >= testFileName.length() ){
-		if(testFileName.equals(curFileName.substring(0,testFileName.length()))){
-		    //System.out.print("same\t");
-		    isFileFound = true;
-		}
-		//System.out.println(testFileName+"\t"+testFileName.length()+"\t"+curFile.getName().substring(0,testFileName.length()));
-		//System.out.println( curFile.getName()/*.substring(0,testFileName.length()-1)*/ );
+    	for(File curFile:listOfFiles){
+	        String curFileName = curFile.getName();
+	        if( curFileName.length() >= testFileName.length() ){
+		        if(testFileName.equals(curFileName.substring(0,testFileName.length()))){
+		            //System.out.print("same\t");
+		            isFileFound = true;
+		        }
+		        //System.out.println(testFileName+"\t"+testFileName.length()+"\t"+curFile.getName().substring(0,testFileName.length()));
+		        //System.out.println( curFile.getName()/*.substring(0,testFileName.length()-1)*/ );
+	        }
 	    }
-	}
 
-	if(!isFileFound){
+	    if(!isFileFound){
             System.out.println("ERROR: "+inString+" IS NOT A FILE");
             System.exit(1);
-	}
+	    }
     }
 
     private static void isStringDir(String inString){
@@ -118,27 +118,27 @@ public class CreateAlignerJobs {
 
     private static Hashtable<String,String> getConfiguration(String confFile)throws FileNotFoundException{
     
-	Scanner input = new Scanner(new File(confFile));
+	    Scanner input = new Scanner(new File(confFile));
 	
-	Hashtable<String, String> confTable = new Hashtable<String, String>();
+	    Hashtable<String, String> confTable = new Hashtable<String, String>();
 
-	while(input.hasNextLine()){
-	    String curLine = input.nextLine();
-	    if(!curLine.equals("")){
-		char firstChar =  curLine.charAt(0);
-		if(firstChar != '#'){
-		    String[] curItem = curLine.split("=");
-		    if(curItem.length == 2){
-			confTable.put(curItem[0].trim(), curItem[1].trim());
-		    }else{
-			System.out.println("CONFIGURATION FILE ERROR");
-			System.exit(1);
-		    }
-		}
+	    while(input.hasNextLine()){
+	        String curLine = input.nextLine();
+	        if(!curLine.equals("")){
+		        char firstChar =  curLine.charAt(0);
+		        if(firstChar != '#'){
+		            String[] curItem = curLine.split("=");
+		            if(curItem.length == 2){
+			            confTable.put(curItem[0].trim(), curItem[1].trim());
+		            }else{
+			            System.out.println("CONFIGURATION FILE ERROR");
+			            System.exit(1);
+		            }
+		        }
+	        }
 	    }
-	}
 
-	return confTable;
+	    return confTable;
     }
 
     private static String getInputDir(Hashtable<String, String> confTable){
@@ -159,7 +159,7 @@ public class CreateAlignerJobs {
 
     private static boolean isIncludeQuake(Hashtable<String, String> confTable){
 
-	String result= confTable.get("INCLUDE_QUAKE").toLowerCase();
+	    String result= confTable.get("INCLUDE_QUAKE").toLowerCase();
 
         return result.equals("true");
     }
@@ -177,6 +177,7 @@ public class CreateAlignerJobs {
 
         return result.equals("true");
     }
+
     private static boolean isIncludeNovoalign(Hashtable<String, String> confTable){
         String result= confTable.get("INCLUDE_NOVOALIGN").toLowerCase();
         return Boolean.valueOf(result);
@@ -191,19 +192,19 @@ public class CreateAlignerJobs {
     }
 
     private static String getBowtieRef(Hashtable<String, String> confTable){
-	return confTable.get("BOWTIE_REF");
+	    return confTable.get("BOWTIE_REF");
     }
 
     private static String getBwaRef(Hashtable<String, String> confTable){
-	return confTable.get("BWA_REF");
+	    return confTable.get("BWA_REF");
     }
 
     private static String getLastRef(Hashtable<String, String> confTable){
-	return confTable.get("LAST_REF");
+	    return confTable.get("LAST_REF");
     }
 
     private static String getNovoalignRef(Hashtable<String, String> confTable){
-	return confTable.get("NOVOALIGN_REF");
+	    return confTable.get("NOVOALIGN_REF");
     }
 
     private static String[] getIsolates(Hashtable<String, String> confTable)throws FileNotFoundException{

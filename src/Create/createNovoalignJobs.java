@@ -37,7 +37,7 @@ public class createNovoalignJobs{
 		String COR_ID = "";
         if(isQuakeCorrected){
             COR_EXTENSION = ".cor";
-	    COR_ID = "COR_";
+			COR_ID = "COR_";
         }
 
         String ISOLATE_DIR = "NOVOALIGN-"+COR_ID+ISOLATE_ID+"/";
@@ -46,34 +46,34 @@ public class createNovoalignJobs{
 		/*Create Folder where the data will be saved*/
         new File(OUTPUT_DIR+ISOLATE_DIR).mkdirs();
 	
-	/* Header required by scinet */
-	out.println("#!/bin/bash");                           
-	out.println("#MOAB/Torque submission script for Multiple Serial Jobs");                                              
-	out.println("#PBS -l nodes=2:ppn=8,walltime=6:00:00");                                              
-	out.println("#PBS -N serialx8");                                                               
-	out.println("module load gnu-parallel\n");
-	out.println("module load novoalign");
-	out.println("module load samtools");
-	out.println("module load bcftools");
+		/* Header required by scinet */
+		out.println("#!/bin/bash");
+		out.println("#MOAB/Torque submission script for Multiple Serial Jobs");
+		out.println("#PBS -l nodes=2:ppn=8,walltime=18:00:00");
+		out.println("#PBS -N serialx8");
+		out.println("module load gnu-parallel\n");
+		out.println("module load novoalign");
+		out.println("module load samtools");
+		out.println("module load bcftools");
 	
-	/* The actual alignment */                                                                                         
-	out.println("novoalign -o SAM -f "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq -d "+ALIGNER_REF+" > "+OUTPUT_DIR+ISOLATE_DIR+"r.sam\n");
-		
-	out.println("## SAM FILE IS CONVERTED INTO BINARY FORM ##");                                                  
-	out.println("samtools view -bS "+OUTPUT_DIR+ISOLATE_DIR+"r.sam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bam");
-	out.println("## SORT BAM FILE FOR ##");                                                       
-	out.println("samtools sort "+OUTPUT_DIR+ISOLATE_DIR+"r.bam "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted");
-	out.println("## REMOVE r.sam FILE ##");
-	//out.println("rm "+MAINDIR+ISOLATE+"/r.sam");
-	//out.println("rm "+MAINDIR+ISOLATE+"/r.bam\n");
-	
-	out.println("## CREATE LIST OF POTENTIAL SNP OR INDEL ##");                                                      
-	out.println("samtools mpileup -uf "+REFERENCE+" "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted.bam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf");
-	out.println("## PARSE POTENTIAL SNP OR INDEL USING BAYESIAN INFERENCE ##");                         
-	out.println("bcftools view -bvcg "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf");
-	out.println("## BCF FILE IS CONVERTED VIEWABLE FORM ##");                                          
-	out.println("bcftools view "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r.vcf");
-	out.close();
+		/* The actual alignment */
+		out.println("novoalign -o SAM -f "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq -d "+ALIGNER_REF+" > "+OUTPUT_DIR+ISOLATE_DIR+"r.sam\n");
+
+		out.println("## SAM FILE IS CONVERTED INTO BINARY FORM ##");
+		out.println("samtools view -bS "+OUTPUT_DIR+ISOLATE_DIR+"r.sam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bam");
+		out.println("## SORT BAM FILE FOR ##");
+		out.println("samtools sort "+OUTPUT_DIR+ISOLATE_DIR+"r.bam "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted");
+		out.println("## REMOVE r.sam FILE ##");
+		//out.println("rm "+MAINDIR+ISOLATE+"/r.sam");
+		//out.println("rm "+MAINDIR+ISOLATE+"/r.bam\n");
+
+		out.println("## CREATE LIST OF POTENTIAL SNP OR INDEL ##");
+		out.println("samtools mpileup -uf "+REFERENCE+" "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted.bam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf");
+		out.println("## PARSE POTENTIAL SNP OR INDEL USING BAYESIAN INFERENCE ##");
+		out.println("bcftools view -bvcg "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf");
+		out.println("## BCF FILE IS CONVERTED VIEWABLE FORM ##");
+		out.println("bcftools view "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r.vcf");
+		out.close();
     }
 
     private static String checkDirString(String inputDir){
