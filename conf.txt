@@ -1,0 +1,54 @@
+REF_FILE = /scratch/d/dguttman/cizydor/POOOOPS/reference/3b.fa
+ID_LIST_FILE = /scratch/d/dguttman/cizydor/POOOOPS/id_list.txt
+ALIGNER = BWA
+
+# Settings for sinetjobcreator
+# novoindex reference_NOVOALIGN reference.fa
+# lastdb reference_LAST reference.fa
+# bwa index reference.fa
+# samtools faidx reference.fa
+INPUT_DIR = /scratch/d/dguttman/cizydor/POOOOPS/sequencing/seqData_BU_CoNrAd
+ALIGNMENT_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignment_dir
+JOBS_DIR = /scratch/d/dguttman/cizydor/POOOOPS/jobs_dir
+INCLUDE_QUAKE = TRUE	
+INCLUDE_BWA = TRUE
+INCLUDE_LAST = TRUE
+INCLUDE_NOVOALIGN = TRUE
+INCLUDE_BOWTIE2 = FALSE
+BWA_REF = /scratch/d/dguttman/cizydor/POOOOPS/reference/3b.fa
+NOVOALIGN_REF = /scratch/d/dguttman/cizydor/POOOOPS/reference/3b_NOVOALIGN
+LAST_REF = /scratch/d/dguttman/cizydor/POOOPS/reference/3b_last
+
+# Settings for gethqsnps
+HQ_SNP_LIST_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/hq_snps_list.txt
+HQ_SNP_WORKING_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignments_diaz
+HQ_SNP_QUALITY = 30
+HQ_SNP_DEPTH = 20
+HQ_SNP_DIST_TO_CONTIG_END = 250
+HQ_SNP_READ_BALANCE = 3
+HQ_SNP_REF_TO_ALT_BALANCE = 0.2
+HQ_SNP_CLUSTER_SIZE = 15
+HQ_SNP_REQUIRED_NUM = 3
+INCLUDE_PRE_QC = FALSE
+
+# Settings for getintraclonalsnps
+INTRA_SNP_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/hq_snps_list.txt
+INTRA_SNP_WORKING_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignments_diaz
+INTRA_SNP_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/intraclonal_snps_list.txt
+
+# Settings for snpchecker
+SNP_CHECKER_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/intraclonal_snps_list.txt
+SNP_CHECKER_WORKING_DIR = /scratch/d/dguttman/cizydor/POOOOPS/alignments_diaz
+SNP_CHECKER_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/checked_snps.txt
+
+# Settings for snpfilter
+SNP_FILTER_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/checked_snps.txt
+SNP_FILTER_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/filtered_snps.txt
+SNP_FILTER_MIN_GOOD_BALANCE = 1
+SNP_FILTER_MIN_GOOD_CALL_RATIO = 0.8
+SNP_FILTER_MIN_GOOD_QUALITY = 25
+
+# Settings for createalignment
+CREATE_ALIGN_INPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/filtered_snps.txt
+CREATE_ALIGN_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_alignment.fa
+CREATE_ALIGN_LIST_OUTPUT = /scratch/d/dguttman/cizydor/POOOOPS/snp_calling/final_snp_list.txt
