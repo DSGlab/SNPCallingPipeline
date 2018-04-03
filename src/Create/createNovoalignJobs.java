@@ -50,7 +50,7 @@ public class createNovoalignJobs{
 		out.println("#!/bin/bash");
 		out.println("#MOAB/Torque submission script for Multiple Serial Jobs");
 		out.println("#PBS -l nodes=2:ppn=8,walltime=18:00:00");
-		out.println("#PBS -N serialx8");
+		out.println("#PBS -N novoalign-"+ISOLATE_ID);
 		out.println("module load gnu-parallel\n");
 		out.println("module load novoalign");
 		out.println("module load samtools");

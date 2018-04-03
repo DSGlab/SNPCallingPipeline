@@ -298,8 +298,8 @@ public class VCFHolderMap {
         ArrayList<VCFHolder> vcfHolders = new ArrayList<VCFHolder>();
 
         for ( String temp : variantFiles ) {
-            file = new File( temp );
-            vh = new VCFHolder(file);
+            //file = new File( temp );
+            vh = new VCFHolder(temp);
             vcfHolders.add(vh);
         }
 

@@ -1,5 +1,7 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -28,12 +30,13 @@ public class VCFHolder {
     }
 
     public VCFHolder ( String s ) throws FileNotFoundException{
-        this( new File ( s ) );
+        this( new FileReader ( s ) );
     }
 
-    public VCFHolder ( File f ) throws FileNotFoundException {
+    public VCFHolder ( FileReader f ) throws FileNotFoundException {
         this.variants = new ArrayList<VCFVariant>();
-        Scanner in = new Scanner( f );
+        //Scanner in = new Scanner( f );
+        Scanner in = new Scanner(new BufferedReader(f));
 
         while( in.hasNextLine() ){
             String tempLine = in.nextLine();
