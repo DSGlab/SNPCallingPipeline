@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.Hashtable;
 import java.util.ArrayList;
@@ -21,7 +22,18 @@ public class CreateAlignerJobs {
 	    isStringDir(OUTPUT_DIR);
         String JOBS_DIR = getJobsDir(conf);
         isStringDir(JOBS_DIR);
-	
+
+        String BWA_PATH = getBwaPath(conf);
+        isStringDir(BWA_PATH);
+        String NOVOALIGN_PATH = getNovoAlignPath(conf);
+		isStringDir(NOVOALIGN_PATH);
+        String LAST_PATH = getLastPath(conf);
+		isStringDir(LAST_PATH);
+        String SAMTOOLS_PATH = getSamtoolsPath(conf);
+		isStringDir(SAMTOOLS_PATH);
+        String BCFTOOLS_PATH = getBcftoolsPath(conf);
+		isStringDir(BCFTOOLS_PATH);
+
 	    boolean includeQuake = isIncludeQuake(conf);
     	boolean includeBowtie = isIncludeBowtie(conf);
     	boolean includeBwa = isIncludeBwa(conf);
@@ -45,44 +57,92 @@ public class CreateAlignerJobs {
     	    isStringFile(NOVO_REF);
     	}
 
+    	ArrayList<String> tasks = new ArrayList<String>();
     	for(String ISOLATE : ISOLATE_LIST){
-	        System.out.println("\tPrinting jobs for isolate:\t"+ISOLATE);
+	        System.out.println("\tPrinting task for isolate:\t"+ISOLATE);
             if(includeBowtie){
 	    		Create.createBowtieJobs.run(INPUT_DIR, BOWTIE_REF, REFERENCE, OUTPUT_DIR, ISOLATE, false, JOBS_DIR);
+	    		tasks.add("bash bowtie2-"+ISOLATE+".sh 2>bowtie2-"+ISOLATE+".sh.err >bowtie2-"+ISOLATE+".sh.out &");
 	        }
 	        if(includeBwa){
-                Create.createBwaJobs.run(INPUT_DIR, BWA_REF, REFERENCE, OUTPUT_DIR, ISOLATE, false, JOBS_DIR);
+                Create.createBwaJobs.run(INPUT_DIR, BWA_REF, REFERENCE, OUTPUT_DIR, ISOLATE, false, JOBS_DIR, BWA_PATH, SAMTOOLS_PATH, BCFTOOLS_PATH);
+				tasks.add("bash bwa-"+ISOLATE+".sh 2>bwa-"+ISOLATE+".sh.err >bwa-"+ISOLATE+".sh.out &");
 	        }
             if(includeLast){
-                Create.createLastJobs.run(INPUT_DIR, LAST_REF, REFERENCE, OUTPUT_DIR, ISOLATE, false, JOBS_DIR);
-	        }
+                Create.createLastJobs.run(INPUT_DIR, LAST_REF, REFERENCE, OUTPUT_DIR, ISOLATE, false, JOBS_DIR, LAST_PATH, SAMTOOLS_PATH, BCFTOOLS_PATH);
+				tasks.add("bash last-"+ISOLATE+".sh 2>last-"+ISOLATE+".sh.err >last-"+ISOLATE+".sh.out &");
+			}
 	        if(includeNovoalign){
-                Create.createNovoalignJobs.run(INPUT_DIR, NOVO_REF, REFERENCE, OUTPUT_DIR, ISOLATE, false, JOBS_DIR);
-	        }
+                Create.createNovoalignJobs.run(INPUT_DIR, NOVO_REF, REFERENCE, OUTPUT_DIR, ISOLATE, false, JOBS_DIR, NOVOALIGN_PATH, SAMTOOLS_PATH, BCFTOOLS_PATH);
+				tasks.add("bash novoalign-"+ISOLATE+".sh 2>novoalign-"+ISOLATE+".sh.err >novoalign-"+ISOLATE+".sh.out &");
+			}
 
 	        if(includeQuake){
 		        if(includeBowtie){
                     Create.createBowtieJobs.run(INPUT_DIR, BOWTIE_REF, REFERENCE, OUTPUT_DIR, ISOLATE, true, JOBS_DIR);
-		        }
+					tasks.add("bash bowtie2-COR_"+ISOLATE+".sh 2>bowtie2-COR_"+ISOLATE+".sh.err >bowtie2-COR_"+ISOLATE+".sh.out &");
+				}
 		        if(includeBwa){
-                    Create.createBwaJobs.run(INPUT_DIR, BWA_REF, REFERENCE, OUTPUT_DIR, ISOLATE, true, JOBS_DIR);
-		        }
+                    Create.createBwaJobs.run(INPUT_DIR, BWA_REF, REFERENCE, OUTPUT_DIR, ISOLATE, true, JOBS_DIR, BWA_PATH, SAMTOOLS_PATH, BCFTOOLS_PATH);
+					tasks.add("bash bwa-COR_"+ISOLATE+".sh 2>bwa-COR_"+ISOLATE+".sh.err >bwa-COR_"+ISOLATE+".sh.out &");
+				}
 		        if(includeLast){
-                    Create.createLastJobs.run(INPUT_DIR, LAST_REF, REFERENCE, OUTPUT_DIR, ISOLATE, true, JOBS_DIR);
+                    Create.createLastJobs.run(INPUT_DIR, LAST_REF, REFERENCE, OUTPUT_DIR, ISOLATE, true, JOBS_DIR, LAST_PATH, SAMTOOLS_PATH, BCFTOOLS_PATH);
+					tasks.add("bash last-COR_"+ISOLATE+".sh 2>last-COR_"+ISOLATE+".sh.err >last-COR_"+ISOLATE+".sh.out &");
 		        }
 		        if(includeNovoalign){
-                    Create.createNovoalignJobs.run(INPUT_DIR, NOVO_REF, REFERENCE, OUTPUT_DIR, ISOLATE, true, JOBS_DIR);
+                    Create.createNovoalignJobs.run(INPUT_DIR, NOVO_REF, REFERENCE, OUTPUT_DIR, ISOLATE, true, JOBS_DIR, NOVOALIGN_PATH, SAMTOOLS_PATH, BCFTOOLS_PATH);
+					tasks.add("bash novoalign-COR_"+ISOLATE+".sh 2>novoalign-COR_"+ISOLATE+".sh.err >novoalign-COR_"+ISOLATE+".sh.out &");
 		        }
 	        }
 	    }
+
+		createSubmitters(tasks, JOBS_DIR);
+
+
+
 	    System.out.println();
     }
+
+
+
+    private static void createSubmitters(ArrayList<String> tasks, String dir) throws FileNotFoundException {
+    	int count = 0;
+		PrintWriter out = null;// = new PrintWriter(dir+"/submitter"+1+".sh");
+		//System.out.println(dir+"/submitter"+1+".sh");
+		for(String task:tasks){
+			count++;
+			if(count%40==1){
+				out = new PrintWriter(dir+"/aligner"+count/40+".sh");
+
+				out.println("#!/bin/bash");
+				out.println("#SBATCH --nodes=1");
+				out.println("#SBATCH --cpus-per-task=40");
+				out.println("#SBATCH --time=24:00:00");
+				out.println("#SBATCH --job-name=aligner_jobs-"+count/40);
+				out.println("#SBATCH --output=aligner_jobs-"+count/40+".txt\n");
+
+				out.println(task);
+			}else if(count==tasks.size()){
+				out.println(task);
+				out.println("wait");
+				out.close();
+				//System.out.println("close printwriter");
+			}else if(count%40==0){
+				out.println(task);
+				out.println("wait");
+				out.close();
+				//System.out.println("close printwriter");
+			}else{
+				out.println(task);
+			}
+		}
+	}
 
     /*
      * WILL NOT DETECT IT IF NAME IS TOO SHORT 
      */
     private static void isStringFile(String inString){
-
 	    boolean isFileFound = false;
         //System.out.println(inString);
 	    File testFile = new File(inString);
@@ -97,8 +157,6 @@ public class CreateAlignerJobs {
 		            //System.out.print("same\t");
 		            isFileFound = true;
 		        }
-		        //System.out.println(testFileName+"\t"+testFileName.length()+"\t"+curFile.getName().substring(0,testFileName.length()));
-		        //System.out.println( curFile.getName()/*.substring(0,testFileName.length()-1)*/ );
 	        }
 	    }
 
@@ -141,66 +199,85 @@ public class CreateAlignerJobs {
 	    return confTable;
     }
 
+    private static String getBwaPath(Hashtable<String, String> confTable){
+		return getParameter(confTable, "BWA_PATH");
+	}
+
+	private static String getLastPath(Hashtable<String, String> confTable){
+		return getParameter(confTable,"LAST_PATH");
+	}
+
+	private static String getNovoAlignPath(Hashtable<String, String> confTable){
+		return getParameter(confTable,"NOVOALIGN_PATH");
+	}
+
+	private static String getSamtoolsPath(Hashtable<String, String> confTable){
+		return getParameter(confTable,"SAMTOOLS_PATH");
+	}
+
+	private static String getBcftoolsPath(Hashtable<String, String> confTable){
+		return getParameter(confTable,"BCFTOOLS_PATH");
+	}
+
     private static String getInputDir(Hashtable<String, String> confTable){
-	    return confTable.get("INPUT_DIR");
+	    return getParameter(confTable,"INPUT_DIR");
     }
 
     private static String getOutputDir(Hashtable<String, String> confTable){
-	    return confTable.get("ALIGNMENT_DIR");
+	    return getParameter(confTable,"ALIGNMENT_DIR");
     }
 
     private static String getJobsDir(Hashtable<String, String> confTable){
-        return confTable.get("JOBS_DIR");
+        return getParameter(confTable,"JOBS_DIR");
     }
 
     private static String getReference(Hashtable<String, String> confTable){
-	    return confTable.get("REF_FILE");
+	    return getParameter(confTable,"REF_FILE");
     }
 
     private static boolean isIncludeQuake(Hashtable<String, String> confTable){
-
-	    String result= confTable.get("INCLUDE_QUAKE").toLowerCase();
+	    String result= getParameter(confTable,"INCLUDE_QUAKE").toLowerCase();
 
         return result.equals("true");
     }
 
     private static boolean isIncludeBwa(Hashtable<String, String> confTable){
 	
-        String result= confTable.get("INCLUDE_BWA").toLowerCase();
+        String result= getParameter(confTable,"INCLUDE_BWA").toLowerCase();
 
         return result.equals("true");
     }
     
     private static boolean isIncludeLast(Hashtable<String, String> confTable){
 
-        String result= confTable.get("INCLUDE_LAST").toLowerCase();
+        String result= getParameter(confTable,"INCLUDE_LAST").toLowerCase();
 
         return result.equals("true");
     }
 
     private static boolean isIncludeNovoalign(Hashtable<String, String> confTable){
-        String result= confTable.get("INCLUDE_NOVOALIGN").toLowerCase();
-        return Boolean.valueOf(result);
-        //return result.equals("true");
+        String result= getParameter(confTable,"INCLUDE_NOVOALIGN").toLowerCase();
+        //return Boolean.valueOf(result);
+        return result.equals("true");
     }
     
     private static boolean isIncludeBowtie(Hashtable<String, String> confTable){
 
-        String result= confTable.get("INCLUDE_BOWTIE2").toLowerCase();
+        String result= getParameter(confTable,"INCLUDE_BOWTIE2").toLowerCase();
 
         return result.equals("true");
     }
 
     private static String getBowtieRef(Hashtable<String, String> confTable){
-	    return confTable.get("BOWTIE_REF");
+	    return getParameter(confTable,"BOWTIE_REF");
     }
 
     private static String getBwaRef(Hashtable<String, String> confTable){
-	    return confTable.get("BWA_REF");
+	    return getParameter(confTable,"BWA_REF");
     }
 
     private static String getLastRef(Hashtable<String, String> confTable){
-	    return confTable.get("LAST_REF");
+	    return getParameter(confTable,"LAST_REF");
     }
 
     private static String getNovoalignRef(Hashtable<String, String> confTable){
@@ -208,7 +285,7 @@ public class CreateAlignerJobs {
     }
 
     private static String[] getIsolates(Hashtable<String, String> confTable)throws FileNotFoundException{
-	    String isolatesFileName = confTable.get("ID_LIST_FILE");
+	    String isolatesFileName = getParameter(confTable,"ID_LIST_FILE");
 
 	    Scanner isFile = new Scanner(new File(isolatesFileName));
 
@@ -229,5 +306,15 @@ public class CreateAlignerJobs {
 
         return result;
     }
+
+	private static String getParameter(Hashtable<String, String> confTable, String parameterKey){
+		if(confTable.keySet().contains(parameterKey)){
+			return confTable.get(parameterKey);
+		}else{
+			System.out.println("ERROR: "+parameterKey+" IS NOT SET");
+			System.exit(1);
+		}
+		return "ERROR!!!!";
+	}
 
 }
