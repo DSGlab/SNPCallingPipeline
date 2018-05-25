@@ -58,7 +58,7 @@ public class createLastJobs{
 		out.println(SAMTOOLS_PATH+"/samtools fixmate -O BAM "+OUTPUT_DIR+ISOLATE_DIR+"r.sam "+OUTPUT_DIR+ISOLATE_DIR+"r.bam");
 		out.println(SAMTOOLS_PATH+"/samtools sort -O BAM -o "+OUTPUT_DIR+ISOLATE_DIR+"r.sorted.bam "+OUTPUT_DIR+ISOLATE_DIR+"r.bam\n");
 
-		out.println(BCFTOOLS_PATH+"/bcftools mpileup -Ob -o "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf -f "+ALIGNER_REF+" "+OUTPUT_DIR+ISOLATE_DIR+"r.sorted.bam");
+		out.println(BCFTOOLS_PATH+"/bcftools mpileup -Ob -o "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf -f "+REFERENCE+" "+OUTPUT_DIR+ISOLATE_DIR+"r.sorted.bam");
 		out.println(BCFTOOLS_PATH+"/bcftools call --ploidy 1 -vmO v -o "+OUTPUT_DIR+ISOLATE_DIR+"r.vcf "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf\n");
 
 		out.close();
