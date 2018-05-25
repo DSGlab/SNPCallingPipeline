@@ -2,7 +2,7 @@ import JavaBrew.Utilities;
 
 public class main {
     public static void main(String[] args) throws Exception {
-        System.out.println("SNP Calling Pipeline v. 1.10");
+        System.out.println("SNP Calling Pipeline v. 1.11");
         System.out.println("Questions? julio.diaz@mail.utoronto.ca");
         System.out.println();
         System.out.println("Usage:\tjava -jar SNPCallingPipeline ANALYSIS_NAME [config file]");
@@ -12,7 +12,7 @@ public class main {
 
         switch (args.length){
             case 0:
-                System.out.println("Step 0:\t\tscinetjobcreator\t\tCreate jobs to be used in scinet's niagara");
+                System.out.println("Step 0:\t\tscinetjobcreator\tCreate jobs to be used in scinet's niagara");
                 System.out.println("Step 1:\t\tgethqsnps\t\tGet list of High quuality (confidence) SNPs");
                 System.out.println("Optional step:\tgetintraclonalsnps\tRemove SNPs that are fixed between the isolates and the reference");
                 System.out.println("Step 2:\t\tsnpchecker\t\tGets raw calls at the SNP positions in all the isolates");
