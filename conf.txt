@@ -3,7 +3,7 @@ REF_FILE = /scratch/d/dguttman/diazcaba/references/3j.fa
 ID_LIST_FILE = /scratch/d/dguttman/diazcaba/TEST/id_listTEST.txt
 ALIGNER = BWA
 
-# Settings for sinetjobcreator
+# Settings for scinetjobcreator
 # novoindex reference_NOVOALIGN reference.fa
 # lastdb reference_LAST reference.fa
 # bwa index reference.fa
@@ -11,7 +11,7 @@ ALIGNER = BWA
 INPUT_DIR = /scratch/d/dguttman/diazcaba/sequencing
 ALIGNMENT_DIR = /scratch/d/dguttman/diazcaba/alignmentTEST
 JOBS_DIR = /scratch/d/dguttman/diazcaba/jobsTEST
-INCLUDE_QUAKE = FLASE
+INCLUDE_QUAKE = FALSE
 INCLUDE_BWA = TRUE
 INCLUDE_LAST = TRUE
 INCLUDE_NOVOALIGN = TRUE
