@@ -6,3 +6,6 @@ Sample configuration file: https://github.com/DSGlab/SNPCallingPipeline/raw/mast
 To get details on how this pipeline works, run:<br>
 <code>java -jar SNPCallingPipeline.jar</code>
 
+# Requirements:
+- Paired-End sequencing reads in the format: \<id>_1.fq \<id>_2.fq (id is identical as described in the id list)<br>
+- Reference headers in the format: \<refName>\_\<repliconType>\_\<repliconNum> (e.g. pao1_chromosome_1)
