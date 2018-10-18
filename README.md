@@ -12,7 +12,7 @@ SNP filtering pipeline by julio.diaz@mail.utoronto.ca @ [Guttman lab](https://gu
 * Test
 ```sh
 $ java -jar SNPCalling Pipeline.jar
-SNP Calling Pipeline v. 1.11
+SNP Calling Pipeline v. 1.12
 Questions? julio.diaz@mail.utoronto.ca
 
 Usage:	java -jar SNPCallingPipeline ANALYSIS_NAME [config file]
@@ -161,7 +161,7 @@ OR the `aligner?.sh` bash scripts can be submitted to niagara in scinet.
 ```
 $ sbatch aligner0.sh
 ```
-Wait for the scripts to finsh.
+Wait for the scripts to finsh.<br>
 6. Run `gethqns` step
 ```sh
 $ java -jar SNPCallingPipeline.jar gethqsnps conf.txt
