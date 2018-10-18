@@ -2,7 +2,7 @@ import JavaBrew.Utilities;
 
 public class main {
     public static void main(String[] args) throws Exception {
-        System.out.println("SNP Calling Pipeline v. 1.11");
+        System.out.println("SNP Calling Pipeline v. 1.12");
         System.out.println("Questions? julio.diaz@mail.utoronto.ca");
         System.out.println();
         System.out.println("Usage:\tjava -jar SNPCallingPipeline ANALYSIS_NAME [config file]");
