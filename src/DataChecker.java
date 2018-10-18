@@ -13,17 +13,24 @@ public class DataChecker {
     private static final String ID_LIST_FILE_STRING = "ID_LIST_FILE";
     private static final String INPUT_DIR_STRING = "INPUT_DIR";
 
-    private static final String BWA_PATH = "BWA_PATH";
-    private static final String LAST_PATH = "LAST_PATH";
-    private static final String NOVOALIGN_PATH = "NOVOALIGN_PATH";
-    private static final String SAMTOOLS_PATH = "SAMTOOLS_PATH";
-    private static final String BCFTOOLS_PATH = "BCFTOOLS_PATH";
+    private static final String BWA_PATH_STRING = "BWA_PATH";
+    private static final String LAST_PATH_STRING = "LAST_PATH";
+    private static final String NOVOALIGN_PATH_STRING = "NOVOALIGN_PATH";
+    private static final String SAMTOOLS_PATH_STRING = "SAMTOOLS_PATH";
+    private static final String BCFTOOLS_PATH_STRING = "BCFTOOLS_PATH";
 
     public static void main(String[] args) throws FileNotFoundException {
         Hashtable<String,String> options = Utilities.getConfigurationTable(args[0]);
         /* The reference genome in fasta file */
         String REF_FILE = options.get( REF_FILE_STRING );
         String INPUT_DIR = options.get( INPUT_DIR_STRING );
+
+        /* Software */
+        String BWA_PATH =  options.get( BWA_PATH_STRING );
+        String LAST_PATH =  options.get( LAST_PATH_STRING );
+        String NOVOALIGN_PATH =  options.get( NOVOALIGN_PATH_STRING );
+        String SAMTOOLS_PATH =  options.get( SAMTOOLS_PATH_STRING );
+        String BCFTOOLS_PATH =  options.get( BCFTOOLS_PATH_STRING );
 
         ArrayList<String> result = new ArrayList<String>();
         File file = new File( REF_FILE );
@@ -42,21 +49,31 @@ public class DataChecker {
             readErrorCount = checkReads(INPUT_DIR,IDS);
         }
 
-        /**/
-        checkSoftware(BWA_PATH,"BWA");
-        checkSoftware(LAST_PATH,"LAST");
-        checkSoftware(NOVOALIGN_PATH,"NOVOALIGN");
-        checkSoftware(BCFTOOLS_PATH,"BCFTOOLS");
-        checkSoftware(SAMTOOLS_PATH,"SAMTOOLS");
+        /* Checks software */
+        Integer bwaError = checkSoftware(BWA_PATH,"bwa");
+        Integer lastError = checkSoftware(LAST_PATH,"src/lastal");
+        Integer lastPPError = checkSoftware(LAST_PATH,"src/last-pair-probs");
+        Integer lastMCError = checkSoftware(LAST_PATH,"scripts/maf-convert");
+        Integer novoalignError = checkSoftware(NOVOALIGN_PATH,"novoalign");
+        Integer bcftoolsError = checkSoftware(BCFTOOLS_PATH,"bcftools");
+        Integer samtoolsError = checkSoftware(SAMTOOLS_PATH,"samtools");
 
-        System.out.println( readErrorCount + refErrorCount+inputDirErrorCount+" error(s) found in the reference or seq read files\n");
+        /* NEEDS TO CHECK REFERENCE */
+
+
+        System.out.println("\n"+ (readErrorCount + refErrorCount+inputDirErrorCount)+" error(s) found in the reference or seq read files");
+        System.out.println( lastMCError+lastPPError+bwaError + lastError+novoalignError+samtoolsError+bcftoolsError+" error(s) found in the path to the software");
+        System.out.println();
+
     }
 
-    private static void checkSoftware(String bin, String label){
-        File file = new File(bin);
+    private static Integer checkSoftware(String bin, String label){
+        File file = new File(bin+"/"+label);
         if(!file.exists()){
             System.err.println("ERROR\tThe binaries for "+label+" cannot be found.");
+            return 1;
         }
+        return 0;
     }
 
     /**
