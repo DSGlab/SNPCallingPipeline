@@ -45,7 +45,7 @@ Example: `lastdb reference_LAST reference.fa`
 Example: `novoindex reference_NOVOALIGN reference.fa`
 
 ### Configuration File:
-##### SETTTINGS FOR scinetojobcreator
+##### SETTTINGS FOR scinetojobcreator STEP
 * `REF_FILE` - The reference file in fasta format. Must include complete path to file.
 * `ID_LIST_FILE` - The file including the IDs of all the strains to be taken into acccount (one per line). Must include complete path to file.
 * `ALIGNER` - The name of the aligner to be taken into account for the second step (options: "BWA","LAST","NOVOALIGN").
