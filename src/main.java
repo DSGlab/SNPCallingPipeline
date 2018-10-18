@@ -2,7 +2,7 @@ import JavaBrew.Utilities;
 
 public class main {
     public static void main(String[] args) throws Exception {
-        System.out.println("SNP Calling Pipeline v. 1.09");
+        System.out.println("SNP Calling Pipeline v. 1.12");
         System.out.println("Questions? julio.diaz@mail.utoronto.ca");
         System.out.println();
         System.out.println("Usage:\tjava -jar SNPCallingPipeline ANALYSIS_NAME [config file]");
@@ -12,6 +12,8 @@ public class main {
 
         switch (args.length){
             case 0:
+                System.out.println("Setup:\t\tdatachecker\t\tChecks naming of input files");
+                System.out.println("Step 0:\t\tscinetjobcreator\tCreate jobs to be used in scinet's niagara");
                 System.out.println("Step 1:\t\tgethqsnps\t\tGet list of High quuality (confidence) SNPs");
                 System.out.println("Optional step:\tgetintraclonalsnps\tRemove SNPs that are fixed between the isolates and the reference");
                 System.out.println("Step 2:\t\tsnpchecker\t\tGets raw calls at the SNP positions in all the isolates");
@@ -37,6 +39,10 @@ public class main {
             Analysis analysisName = Analysis.valueOf( analysis );
 
             switch (analysisName) {
+                case datachecker:
+                    System.out.println("Checking input files.");
+                    DataChecker.main(input);
+                    break;
                 case gethqsnps:
                     System.out.println("Starting Get_HQ-SNPs analysis.");
                     GetHQSNPs.main(input);
@@ -72,6 +78,6 @@ public class main {
     }
 
     public enum Analysis{
-        gethqsnps, getintraclonalsnps, snpchecker, snpfilter, createalignment, scinetjobcreator
+        datachecker, gethqsnps, getintraclonalsnps, snpchecker, snpfilter, createalignment, scinetjobcreator
     }
 }

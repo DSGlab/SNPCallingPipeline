@@ -22,11 +22,11 @@ public class createNovoalignJobs{
 		boolean quaked = false;
 
 		for(String id:isoList){
-		    run(INDIR, ALREF, REF, OUTDIR, id, quaked, JOBS_DIR);
+		    run(INDIR, ALREF, REF, OUTDIR, id, quaked, JOBS_DIR,"","","");
 		}
     }
 
-    public static void run(String INPUT_DIR, String ALIGNER_REF, String REFERENCE, String OUTPUT_DIR, String ISOLATE_ID, boolean isQuakeCorrected, String JOBS_DIR) throws FileNotFoundException{
+    public static void run(String INPUT_DIR, String ALIGNER_REF, String REFERENCE, String OUTPUT_DIR, String ISOLATE_ID, boolean isQuakeCorrected, String JOBS_DIR, String NOVOALIGN_PATH, String SAMTOOLS_PATH, String BCFTOOLS_PATH) throws FileNotFoundException{
   
         /* Ensure directory String is appropriate */
         INPUT_DIR = checkDirString(INPUT_DIR);
@@ -48,31 +48,16 @@ public class createNovoalignJobs{
 	
 		/* Header required by scinet */
 		out.println("#!/bin/bash");
-		out.println("#MOAB/Torque submission script for Multiple Serial Jobs");
-		out.println("#PBS -l nodes=2:ppn=8,walltime=18:00:00");
-		out.println("#PBS -N novoalign-"+ISOLATE_ID);
-		out.println("module load gnu-parallel\n");
-		out.println("module load novoalign");
-		out.println("module load samtools");
-		out.println("module load bcftools");
-	
+
 		/* The actual alignment */
-		out.println("novoalign -o SAM -f "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq -d "+ALIGNER_REF+" > "+OUTPUT_DIR+ISOLATE_DIR+"r.sam\n");
+		out.println(NOVOALIGN_PATH+"/novoalign -o SAM -f "+INPUT_DIR+ISOLATE_ID+"_1"+COR_EXTENSION+".fq "+INPUT_DIR+ISOLATE_ID+"_2"+COR_EXTENSION+".fq -d "+ALIGNER_REF+" > "+OUTPUT_DIR+ISOLATE_DIR+"r.sam\n");
 
-		out.println("## SAM FILE IS CONVERTED INTO BINARY FORM ##");
-		out.println("samtools view -bS "+OUTPUT_DIR+ISOLATE_DIR+"r.sam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bam");
-		out.println("## SORT BAM FILE FOR ##");
-		out.println("samtools sort "+OUTPUT_DIR+ISOLATE_DIR+"r.bam "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted");
-		out.println("## REMOVE r.sam FILE ##");
-		//out.println("rm "+MAINDIR+ISOLATE+"/r.sam");
-		//out.println("rm "+MAINDIR+ISOLATE+"/r.bam\n");
+		out.println(SAMTOOLS_PATH+"/samtools fixmate -O BAM "+OUTPUT_DIR+ISOLATE_DIR+"r.sam "+OUTPUT_DIR+ISOLATE_DIR+"r.bam");
+		out.println(SAMTOOLS_PATH+"/samtools sort -O BAM -o "+OUTPUT_DIR+ISOLATE_DIR+"r.sorted.bam "+OUTPUT_DIR+ISOLATE_DIR+"r.bam\n");
 
-		out.println("## CREATE LIST OF POTENTIAL SNP OR INDEL ##");
-		out.println("samtools mpileup -uf "+REFERENCE+" "+OUTPUT_DIR+ISOLATE_DIR+"r_sorted.bam > "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf");
-		out.println("## PARSE POTENTIAL SNP OR INDEL USING BAYESIAN INFERENCE ##");
-		out.println("bcftools view -bvcg "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf");
-		out.println("## BCF FILE IS CONVERTED VIEWABLE FORM ##");
-		out.println("bcftools view "+OUTPUT_DIR+ISOLATE_DIR+"r2.bcf > "+OUTPUT_DIR+ISOLATE_DIR+"r.vcf");
+		out.println(BCFTOOLS_PATH+"/bcftools mpileup -Ob -o "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf -f "+REFERENCE+" "+OUTPUT_DIR+ISOLATE_DIR+"r.sorted.bam");
+		out.println(BCFTOOLS_PATH+"/bcftools call --ploidy 1 -vmO v -o "+OUTPUT_DIR+ISOLATE_DIR+"r.vcf "+OUTPUT_DIR+ISOLATE_DIR+"r.bcf\n");
+
 		out.close();
     }
 
@@ -84,4 +69,8 @@ public class createNovoalignJobs{
             return inputDir+"/";
         }
     }
+
+	private static String getParentDirectory(String fullPath){
+		return fullPath.split("/")[fullPath.split("/").length-1];
+	}
 }

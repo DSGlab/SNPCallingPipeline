@@ -37,23 +37,23 @@ public class ExtractSNPInfoFromRast {
         /*
          *
          */
-        String ANNOT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/references/B6CQ.txt";
+        String ANNOT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/references/2e_ncbi.tsv";
 
         /*
          * The file containing information about the variants
          */
-        String VAR_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_calling/CF170_NEW/variants.txt";
+        String VAR_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels.txt";
 
         /*
          * The reference assembly contigs in a fasta format
          */
-        String REF_CONTIGS = Utilities.HOME_PATH+"/Dropbox/CF/references/B6CQ.fa";
+        String REF_CONTIGS = Utilities.HOME_PATH+"/Dropbox/CF/references/2e.fa";
 
         /*
          * The name of the output file containing the information of the
          * annotations with variants.
          */
-        String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_calling/CF170_NEW/SNP_annot.txt";
+        String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels_annot.ncbi.txt";
 
         /*
          * Here, the files are processed and the output is created
@@ -130,6 +130,7 @@ public class ExtractSNPInfoFromRast {
                     String codon = curAnnot.getNucleotideSeq().substring(codonStart, codonStart + 3).toUpperCase();
                     String altCodon = getAlternativeCodon(codon, posInCodon, curVar.getAlternative(), curAnnot.getStrand()).toUpperCase();
                     char refAA = Utilities.getAA(codon);
+                    System.out.println(curVar.getContig()+" "+curVar.getPosition()+" "+codon+" "+altCodon);
                     char altAA = Utilities.getAA(altCodon);
                     String mutType = getMutationType(refAA, altAA);
                     out.print(curAnnot.getNucleotideSeq().charAt(posInGene) + "\t" + posInCodon + "\t" + posInGene + "\t" + codon + "\t" + altCodon + "\t" + refAA + "\t" + altAA + "\t" + mutType + "\t" + curAnnot.getFeature() + "\t" + curAnnot.getFunction() + "\t" + curAnnot.getNucleotideSeq());
