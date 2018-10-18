@@ -51,6 +51,8 @@ public class Utilities {
             return 'G';
         } else if ( base=='G' || base=='g' ) {
             return 'C';
+        } else if ( base=='-') {
+            return '-';
         } else {
             return 'N';
         }
