@@ -1,14 +1,8 @@
 # SNPCallingPipeline
 This is a SNP calling tool, which implements read mapping from three different algorithms ([BWA](http://bio-bwa.sourceforge.net), [LAST](http://last.cbrc.jp/doc/last.html) and [Novoalign](http://www.novocraft.com/products/novoalign/)) and evaluates their output. This pipeline currently is only suitable for bacterial genomes.
 
-SNP filtering pipeline by julio.diaz@mail.utoronto.ca @ Guttman lab.<br>
-Download jar file: https://github.com/DSGlab/SNPCallingPipeline/raw/master/SNPCallingPipeline.jar<br>
-Sample configuration file: https://github.com/DSGlab/SNPCallingPipeline/raw/master/conf.txt<br>
+SNP filtering pipeline by julio.diaz@mail.utoronto.ca @ [Guttman lab](https://guttman.csb.utoronto.ca).<br>
 
-To get details on how this pipeline works, run:<br>
-```Unix
-java -jar SNPCallingPipeline.jar
-```
 
 # Install
 * Download the [SNPCallingPipeline](https://github.com/DSGlab/SNPCallingPipeline/raw/master/SNPCallingPipeline.jar)<br>
@@ -16,7 +10,7 @@ java -jar SNPCallingPipeline.jar
 * Download the sample [configuration file](https://github.com/DSGlab/SNPCallingPipeline/raw/master/conf.txt)<br>
 `$ wget https://github.com/DSGlab/SNPCallingPipeline/raw/master/conf.txt`
 * Test
-```
+```sh
 $ java -jar SNPCalling Pipeline.jar
 SNP Calling Pipeline v. 1.11
 Questions? julio.diaz@mail.utoronto.ca
@@ -33,8 +27,9 @@ Step 4:		createalignment		Creates alignment based on filtered SNP calls
 
 # Setup:
 ### Required Files
-* Paired-End sequencing reads in the format: `\<id>_1.fq \<id>_2.fq` (id is identical as described in the id list)<br>
-* Reference headers in the format: `\<refName>\_\<repliconType>\_\<repliconNum>` (e.g. pao1_chromosome_1)
+* Paired-End sequencing reads in the format: `\<id>_1.fq \<id>_2.fq` (id is identical as described in the id list).<br>
+* Reference headers in the format: `\<refName>\_\<repliconType>\_\<repliconNum>` (e.g. pao1_chromosome_1).
+* File including list of strain names (One strain name per line).
 
 ### Index Reference files
 ##### Index BWA
@@ -43,6 +38,15 @@ Example: `bwa index reference.fa`
 Example: `lastdb reference_LAST reference.fa`
 ##### Index NOVOALIGN
 Example: `novoindex reference_NOVOALIGN reference.fa`
+
+### Strain List File
+One strain per line.
+```
+strainA
+strainB
+strainC
+strainD
+```
 
 ### Configuration File:
 ##### SETTTINGS FOR scinetojobcreator STEP
@@ -97,4 +101,92 @@ Example: `novoindex reference_NOVOALIGN reference.fa`
 * `CREATE_ALIGN_LIST_OUTPUT` - The output file including the positions where SNPs were detected.
 
 # Easy Guide
+### Setup
+1. Create [strain list file](###Strain List File).
+2. Have a reference sequences and paired-end sequencing reads in the [required format](###Required Files).
+3. [Index](###Index Reference files) the reference.
+4. Modify [configuration file](###Configuration File) to match your criteria.
+5. Check that setup was completed
+```sh
+$ java -jar SNPCallingPipeline.jar datachecker conf.txt
 
+SNP Calling Pipeline v. 1.12
+Questions? julio.diaz@mail.utoronto.ca
+
+Usage:	java -jar SNPCallingPipeline ANALYSIS_NAME [config file]
+
+Checking input files.
+
+0 error(s) found in the reference or seq read files
+0 error(s) found in the path to the software
+```
+6. Create jobs
+```sh
+$ java -jar SNPCallingPipeline.jar scinetjobcreator conf.txt
+SNP Calling Pipeline v. 1.12
+Questions? julio.diaz@mail.utoronto.ca
+
+Usage:	java -jar SNPCallingPipeline ANALYSIS_NAME [config file]
+
+Starting Create_Alignment analysis.
+	Printing task for isolate:	strainA
+	Printing task for isolate:	strainB
+	Printing task for isolate:	strainC
+	Printing task for isolate:	strainD
+```
+This created a number of bash scripts in the jobs directory
+```sh
+$ ls jobsDirectory
+aligner0.sh     bwa-strainA.sh       bwa-strainB.sh       bwa-strainC.sh       bwa-strainD.sh
+last-strainA.sh      last-strainB.sh      last-strainC.sh       last-strainD.sh
+novoalign-strainA.sh novoalign-strainB.sh novoalign-strainC.sh novoalign-strainD.sh
+
+```
+The `bwa*.sh`, `novoalign*.sh`, and `last*.sh` files can be executed in the terminal as usual
+```sh
+$ bash bwa-strainA.sh
+$ bash bwa-strainB.sh
+$ bash bwa-strainC.sh
+$ bash bwa-strainD.sh
+$ bash last-strainA.sh
+$ bash last-strainB.sh
+$ bash last-strainC.sh
+$ bash last-strainD.sh
+$ bash novoalign-strainA.sh
+$ bash novoalign-strainB.sh
+$ bash novoalign-strainC.sh
+$ bash novoalign-strainD.sh
+``` 
+OR the `aligner?.sh` bash scripts can be submitted to niagara in scinet.
+```
+$ sbatch aligner0.sh
+```
+Wait for the scripts to finsh.
+6. Run `gethqns` step
+```sh
+$ java -jar SNPCallingPipeline.jar gethqsnps conf.txt
+```
+7. Run `getintraclonalsnps` step
+```sh
+$ java -jar SNPCallingPipeline.jar getintraclonalsnps conf.txt
+```
+8. Run `snpchecker` step
+```sh
+$ java -jar SNPCallingPipeline.jar snpchecker conf.txt
+```
+9. Run `snpfilter` step
+```sh
+$ java -jar SNPCallingPipeline.jar snpfilter conf.txt
+```
+10. Run `createalignment` step
+```sh
+$ java -jar SNPCallingPipeline.jar createalignment conf.txt
+```
+11. Results
+```sh
+$ls outputDirectory
+snp_alignment.fa
+snp_list.fa
+```
+* `snp_alignment.fa` - all positions with HQ SNPs with the proper call
+* `snp_list.fa` - info about every polymorphic position
