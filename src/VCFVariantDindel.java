@@ -131,7 +131,7 @@ public class VCFVariantDindel {
     /**
      * This method tests if variant is labeled as "INDEL"
      *
-     * @return true if variant is an indel
+     * @return true if variant is an IndelAnalysis
      */
     public Boolean isIndel(){
         return this.type.equals( "INDEL" );

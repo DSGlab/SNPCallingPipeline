@@ -18,33 +18,31 @@ public class SNPIdentityFromBlast {
         /*
          * The file containing the variant file.
          */
-        //String VARIANT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_3j/variants.txt";
-        String VARIANT_FILE = Utilities.HOME_PATH+"/Documents/workshop/dafuk/snp_annotation/variants.txt";
+        String VARIANT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/CF170/REVIEW/variants.txt";
 
         /*
          * The prefix of the mview files. It may include the directory.
          */
-        //String MVIEW_FILE_PREFIX = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_3j/";
-        String MVIEW_FILE_PREFIX = Utilities.HOME_PATH+"/Documents/workshop/dafuk/snp_annotation/";
+        String MVIEW_FILE_PREFIX = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/CF170/REVIEW/ATCC23344/";
 
         /*
          * The suffix of the mview files. This could be changed but for
          * simplification purposes should remain the same.
          */
-        String MVIEW_FILE_SUFFIX = "_mview.fa";
+        String MVIEW_FILE_SUFFIX = "_mview.atcc23344.fa";
 
         /*
          * The list of ids to be assessed. If the ids are in a numerical
          * range, then the static getRange() method can be used
          */
-        //ArrayList<String> IDS_ARRAY = Utilities.getRange(1,517);
-        ArrayList<String> IDS_ARRAY = new ArrayList<String>(Arrays.asList( new String[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o"} ));
+        ArrayList<String> IDS_ARRAY = Utilities.getRange(1,1878);
+        //ArrayList<String> IDS_ARRAY = new ArrayList<String>(Arrays.asList( new String[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o"} ));
 
 
         /*
          * The location and name of the file where the output will be printed.
          */
-        String OUT_FILE = Utilities.HOME_PATH+"/Documents/workshop/dafuk/snp_annotation/tbd.txt";
+        String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/CF170/REVIEW/DDS15A1/snp_annot_atcc23344.txt";
 
 
         process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);

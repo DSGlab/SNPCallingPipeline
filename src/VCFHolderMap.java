@@ -153,10 +153,10 @@ public class VCFHolderMap {
             ArrayList<VCFVariant> pass = new ArrayList<VCFVariant>();
 
             for ( VCFVariant var : map.get( key ) ) {
-                System.out.println("1 "+var.getPosition());
-                System.out.println("2 "+var.getChromosome());
-                System.out.println("3 "+ref.get( var.getChromosome() ));
-                System.out.println("4 "+ref.keySet());
+                //System.out.println("1 "+var.getPosition());
+                //System.out.println("2 "+var.getChromosome());
+                //System.out.println("3 "+ref.get( var.getChromosome() ));
+                //System.out.println("4 "+ref.keySet());
 
                 if ( var.getPosition() > min && var.getPosition()<ref.get( var.getChromosome() )-min ) {
                     pass.add( var );
