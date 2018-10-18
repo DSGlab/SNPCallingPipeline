@@ -102,7 +102,7 @@ strainD
 
 # Easy Guide
 ### Setup
-1. Create [strain list file](###Strain List File).
+1. ### Create [strain list file](###Strain List File).
 2. Have a reference sequences and paired-end sequencing reads in the [required format](###Required Files).
 3. [Index](###Index Reference files) the reference.
 4. Modify [configuration file](###Configuration File) to match your criteria.
@@ -184,7 +184,7 @@ $ java -jar SNPCallingPipeline.jar createalignment conf.txt
 ```
 11. Results
 ```sh
-$ls outputDirectory
+$ ls outputDirectory
 snp_alignment.fa
 snp_list.fa
 ```
