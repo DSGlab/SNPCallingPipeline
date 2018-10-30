@@ -2,7 +2,7 @@ import JavaBrew.Utilities;
 
 public class main {
     public static void main(String[] args) throws Exception {
-        System.out.println("SNP Calling Pipeline v. 1.12");
+        System.out.println("SNP Calling Pipeline v. 1.12t");
         System.out.println("Questions? julio.diaz@mail.utoronto.ca");
         System.out.println();
         System.out.println("Usage:\tjava -jar SNPCallingPipeline ANALYSIS_NAME [config file]");
@@ -67,6 +67,9 @@ public class main {
                     System.out.println("Starting Create_Alignment analysis.");
                     CreateAlignerJobs.main(input);
                     break;
+                case annotator:
+                    System.out.println("Internal annotator");
+                    ExtractSNPInfoFromRast.main(input);
                 default:
                     System.out.println("\nwhat are you doing here?\n");
                     break;
@@ -78,6 +81,6 @@ public class main {
     }
 
     public enum Analysis{
-        datachecker, gethqsnps, getintraclonalsnps, snpchecker, snpfilter, createalignment, scinetjobcreator
+        datachecker, gethqsnps, getintraclonalsnps, snpchecker, snpfilter, createalignment, scinetjobcreator, annotator
     }
 }

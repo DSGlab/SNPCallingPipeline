@@ -1,7 +1,7 @@
 # SNPCallingPipeline
 This is a SNP calling tool, which implements read mapping from three different algorithms ([BWA](http://bio-bwa.sourceforge.net), [LAST](http://last.cbrc.jp/doc/last.html) and [Novoalign](http://www.novocraft.com/products/novoalign/)) and evaluates their output. This pipeline currently is only suitable for bacterial genomes.
 
-SNP filtering pipeline by julio.diaz@mail.utoronto.ca @ [Guttman lab](https://guttman.csb.utoronto.ca).<br>
+SNP filtering pipeline by [Julio Diaz Caballero](julio.diaz@mail.utoronto.ca) @ [Guttman lab](https://guttman.csb.utoronto.ca).<br>
 
 
 # Install
@@ -11,12 +11,13 @@ SNP filtering pipeline by julio.diaz@mail.utoronto.ca @ [Guttman lab](https://gu
 `$ wget https://github.com/DSGlab/SNPCallingPipeline/raw/master/conf.txt`
 * Test
 ```sh
-$ java -jar SNPCalling Pipeline.jar
+$ java -jar SNPCallingPipeline.jar
 SNP Calling Pipeline v. 1.12
 Questions? julio.diaz@mail.utoronto.ca
 
 Usage:	java -jar SNPCallingPipeline ANALYSIS_NAME [config file]
 
+Setup:		datachecker		Checks naming of input files
 Step 0:		scinetjobcreator	Create jobs to be used in scinet's niagara
 Step 1:		gethqsnps		Get list of High quuality (confidence) SNPs
 Optional step:	getintraclonalsnps	Remove SNPs that are fixed between the isolates and the reference
@@ -27,9 +28,9 @@ Step 4:		createalignment		Creates alignment based on filtered SNP calls
 
 # Setup:
 ### Required Files
-* Paired-End sequencing reads in the format: `\<id>_1.fq \<id>_2.fq` (id is identical as described in the id list).<br>
-* Reference headers in the format: `\<refName>\_\<repliconType>\_\<repliconNum>` (e.g. pao1_chromosome_1).
-* File including list of strain names (One strain name per line).
+- [X] Paired-End sequencing reads in the format: `\<id>_1.fq \<id>_2.fq` (id is identical as described in the id list).<br>
+- [X] Reference headers in the format: `\<refName>\_\<repliconType>\_\<repliconNum>` (e.g. pao1_chromosome_1).
+- [X] File including list of strain names (One strain name per line).
 
 ### Index Reference files
 ##### Index BWA
@@ -102,7 +103,7 @@ strainD
 
 # Easy Guide
 ### Setup
-1. ### Create [strain list file](###Strain List File).
+1. Create [strain list file](###Strain List File).
 2. Have a reference sequences and paired-end sequencing reads in the [required format](###Required Files).
 3. [Index](###Index Reference files) the reference.
 4. Modify [configuration file](###Configuration File) to match your criteria.

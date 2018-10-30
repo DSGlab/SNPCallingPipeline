@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -30,30 +31,40 @@ import java.util.Scanner;
  * @author juliofdiazc
  */
 public class ExtractSNPInfoFromRast {
+    private static final String ANNOT_FILE_STRING = "ANNOT_FILE";
+    private static final String VARIANT_FILE_STRING = "VARIANT_FILE";
+    private static final String REF_FILE_STRING = "REF_FILE";
+    private static final String OUT_FILE_STRING = "OUT_FILE";
 
     private static final Integer REG_REGION = 150;
 
     public static void main(String[] args) throws FileNotFoundException {
+        Hashtable<String,String> options = Utilities.getConfigurationTable(args[0]);
+
         /*
          *
          */
-        String ANNOT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/references/2e_ncbi.tsv";
+        //String ANNOT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/references/2e_ncbi.tsv";
+        String ANNOT_FILE = options.get(ANNOT_FILE_STRING);
 
         /*
          * The file containing information about the variants
          */
-        String VAR_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels.txt";
+        //String VAR_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels.txt";
+        String VAR_FILE = options.get(VARIANT_FILE_STRING);
 
         /*
          * The reference assembly contigs in a fasta format
          */
-        String REF_CONTIGS = Utilities.HOME_PATH+"/Dropbox/CF/references/2e.fa";
+        //String REF_CONTIGS = Utilities.HOME_PATH+"/Dropbox/CF/references/2e.fa";
+        String REF_CONTIGS = options.get(REF_FILE_STRING);
 
         /*
          * The name of the output file containing the information of the
          * annotations with variants.
          */
-        String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels_annot.ncbi.txt";
+        //String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels_annot.ncbi.txt";
+        String OUT_FILE = options.get(OUT_FILE_STRING);
 
         /*
          * Here, the files are processed and the output is created
@@ -130,7 +141,7 @@ public class ExtractSNPInfoFromRast {
                     String codon = curAnnot.getNucleotideSeq().substring(codonStart, codonStart + 3).toUpperCase();
                     String altCodon = getAlternativeCodon(codon, posInCodon, curVar.getAlternative(), curAnnot.getStrand()).toUpperCase();
                     char refAA = Utilities.getAA(codon);
-                    System.out.println(curVar.getContig()+" "+curVar.getPosition()+" "+codon+" "+altCodon);
+                    //System.out.println(curVar.getContig()+" "+curVar.getPosition()+" "+codon+" "+altCodon);
                     char altAA = Utilities.getAA(altCodon);
                     String mutType = getMutationType(refAA, altAA);
                     out.print(curAnnot.getNucleotideSeq().charAt(posInGene) + "\t" + posInCodon + "\t" + posInGene + "\t" + codon + "\t" + altCodon + "\t" + refAA + "\t" + altAA + "\t" + mutType + "\t" + curAnnot.getFeature() + "\t" + curAnnot.getFunction() + "\t" + curAnnot.getNucleotideSeq());
