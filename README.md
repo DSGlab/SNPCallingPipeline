@@ -10,8 +10,10 @@ SNP filtering pipeline by [Julio Diaz Caballero](julio.diaz@mail.utoronto.ca) @ 
 * Download the sample [configuration file](https://github.com/DSGlab/SNPCallingPipeline/raw/master/conf.txt)<br>
 `$ wget https://github.com/DSGlab/SNPCallingPipeline/raw/master/conf.txt`
 * Test
-```sh
+```
 $ java -jar SNPCallingPipeline.jar
+```
+```
 SNP Calling Pipeline v. 1.12
 Questions? julio.diaz@mail.utoronto.ca
 
@@ -108,9 +110,10 @@ strainD
 3. [Index](###Index Reference files) the reference.
 4. Modify [configuration file](###Configuration File) to match your criteria.
 5. Check that setup was completed
-```sh
+```
 $ java -jar SNPCallingPipeline.jar datachecker conf.txt
-
+```
+```
 SNP Calling Pipeline v. 1.12
 Questions? julio.diaz@mail.utoronto.ca
 
@@ -122,8 +125,10 @@ Checking input files.
 0 error(s) found in the path to the software
 ```
 6. Create jobs
-```sh
+```
 $ java -jar SNPCallingPipeline.jar scinetjobcreator conf.txt
+```
+```
 SNP Calling Pipeline v. 1.12
 Questions? julio.diaz@mail.utoronto.ca
 
@@ -136,15 +141,17 @@ Starting Create_Alignment analysis.
 	Printing task for isolate:	strainD
 ```
 This created a number of bash scripts in the jobs directory
-```sh
+```
 $ ls jobsDirectory
+```
+```
 aligner0.sh     bwa-strainA.sh       bwa-strainB.sh       bwa-strainC.sh       bwa-strainD.sh
 last-strainA.sh      last-strainB.sh      last-strainC.sh       last-strainD.sh
 novoalign-strainA.sh novoalign-strainB.sh novoalign-strainC.sh novoalign-strainD.sh
 
 ```
 The `bwa*.sh`, `novoalign*.sh`, and `last*.sh` files can be executed in the terminal as usual
-```sh
+```
 $ bash bwa-strainA.sh
 $ bash bwa-strainB.sh
 $ bash bwa-strainC.sh
@@ -164,28 +171,30 @@ $ sbatch aligner0.sh
 ```
 Wait for the scripts to finsh.<br>
 6. Run `gethqns` step
-```sh
+```
 $ java -jar SNPCallingPipeline.jar gethqsnps conf.txt
 ```
 7. Run `getintraclonalsnps` step
-```sh
+```
 $ java -jar SNPCallingPipeline.jar getintraclonalsnps conf.txt
 ```
 8. Run `snpchecker` step
-```sh
+```
 $ java -jar SNPCallingPipeline.jar snpchecker conf.txt
 ```
 9. Run `snpfilter` step
-```sh
+```
 $ java -jar SNPCallingPipeline.jar snpfilter conf.txt
 ```
 10. Run `createalignment` step
-```sh
+```
 $ java -jar SNPCallingPipeline.jar createalignment conf.txt
 ```
 11. Results
-```sh
+```
 $ ls outputDirectory
+```
+```
 snp_alignment.fa
 snp_list.fa
 ```
