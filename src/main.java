@@ -19,6 +19,7 @@ public class main {
                 System.out.println("Step 2:\t\tsnpchecker\t\tGets raw calls at the SNP positions in all the isolates");
                 System.out.println("Step 3:\t\tsnpfilter\t\tFilters raw SNP calls");
                 System.out.println("Step 4:\t\tcreatealignment\t\tCreates alignment based on filtered SNP calls");
+                System.out.println("Step 4:\t\tannotator\t\tAnnotate variants (beta)");
                 break;
             case 1:
                 runAnalysis(args[0], confFile);
