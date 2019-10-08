@@ -120,8 +120,8 @@ public class GetHQSNPs {
         if(!includePreQc) {
             varFiles = new String[]{
                     workingDir + BWA_STRING + "-" + id + DIR_SEPARATOR + suffix,
-                    workingDir + LAST_STRING + "-" + id + DIR_SEPARATOR + suffix,
-                    workingDir + NOVOALIGN_STRING + "-" + id + DIR_SEPARATOR + suffix
+                    ////workingDir + LAST_STRING + "-" + id + DIR_SEPARATOR + suffix,
+                    ////workingDir + NOVOALIGN_STRING + "-" + id + DIR_SEPARATOR + suffix
             };
         }else {
             varFiles = new String[]{
@@ -168,9 +168,9 @@ public class GetHQSNPs {
                      /* Filters out indels */
                     if ( !main.get(key).get(0).isIndel() ) {
                         /* Filters out positions that are not reported by all the methods */
-                        if ( main.get(key).size() == ALIGNERS_NUM ) {
+                        ////if ( main.get(key).size() == ALIGNERS_NUM ) {
                             result.add(key);
-                        }
+                        ////}
                     }
                 }
             }

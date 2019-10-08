@@ -30,7 +30,7 @@ import java.util.Scanner;
  *
  * @author juliofdiazc
  */
-public class ExtractSNPInfoFromRast {
+public class ExtractSNPInfoFromRastTest {
     private static final String ANNOT_FILE_STRING = "ANNOT_FILE";
     private static final String VARIANT_FILE_STRING = "VARIANT_FILE";
     private static final String REF_FILE_STRING = "REF_FILE";
@@ -45,18 +45,21 @@ public class ExtractSNPInfoFromRast {
          *
          */
         //String ANNOT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/references/2e_ncbi.tsv";
+        //String ANNOT_FILE = Utilities.HOME_PATH+"/Library/Mobile Documents/com~apple~CloudDocs/bio/magnet/sandbox/EP8_prokka.tsv";
         String ANNOT_FILE = options.get(ANNOT_FILE_STRING);
 
         /*
          * The file containing information about the variants
          */
         //String VAR_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels.txt";
+        //String VAR_FILE = Utilities.HOME_PATH+"/Library/Mobile Documents/com~apple~CloudDocs/bio/magnet/sandbox/snps_031143.txt";
         String VAR_FILE = options.get(VARIANT_FILE_STRING);
 
         /*
          * The reference assembly contigs in a fasta format
          */
         //String REF_CONTIGS = Utilities.HOME_PATH+"/Dropbox/CF/references/2e.fa";
+        //String REF_CONTIGS = Utilities.HOME_PATH+"/Library/Mobile Documents/com~apple~CloudDocs/bio/magnet/sandbox/EP8.fa";
         String REF_CONTIGS = options.get(REF_FILE_STRING);
 
         /*
@@ -64,6 +67,7 @@ public class ExtractSNPInfoFromRast {
          * annotations with variants.
          */
         //String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/DOLOSA_2e/indels_annot.ncbi.txt";
+        //String OUT_FILE = Utilities.HOME_PATH+"/Library/Mobile Documents/com~apple~CloudDocs/bio/magnet/sandbox/031142_annot.fa";
         String OUT_FILE = options.get(OUT_FILE_STRING);
 
         /*
@@ -84,8 +88,8 @@ public class ExtractSNPInfoFromRast {
      */
     public static void process(String annotFile, String varFile, String refContigs, String outFile)
             throws FileNotFoundException {
-        //ArrayList<Annotation> annotList = getAnnotations( annotFile );
-        ArrayList<Annotation> annotList = GbkReader.process(annotFile);
+        ArrayList<Annotation> annotList = getAnnotations( annotFile );
+        //ArrayList<Annotation> annotList = GbkReader.process(annotFile);
         ArrayList<Variant> varList = getVariants( varFile );
         LinkedHashMap<String, String> reference = new FastaPrinter(new File( refContigs )).getSequences();
 

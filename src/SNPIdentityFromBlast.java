@@ -18,31 +18,31 @@ public class SNPIdentityFromBlast {
         /*
          * The file containing the variant file.
          */
-        String VARIANT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/CF170/REVIEW/variants.txt";
+        String VARIANT_FILE = Utilities.HOME_PATH+"/Library/Mobile Documents/com~apple~CloudDocs/bio/magnet/sandbox/annot_pao1/variants.txt";
 
         /*
          * The prefix of the mview files. It may include the directory.
          */
-        String MVIEW_FILE_PREFIX = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/CF170/REVIEW/ATCC23344/";
+        String MVIEW_FILE_PREFIX = Utilities.HOME_PATH+"/Library/Mobile Documents/com~apple~CloudDocs/bio/magnet/sandbox/annot_pao1/";
 
         /*
          * The suffix of the mview files. This could be changed but for
          * simplification purposes should remain the same.
          */
-        String MVIEW_FILE_SUFFIX = "_mview.atcc23344.fa";
+        String MVIEW_FILE_SUFFIX = "_mview.sbw25fa";
 
         /*
          * The list of ids to be assessed. If the ids are in a numerical
          * range, then the static getRange() method can be used
          */
-        ArrayList<String> IDS_ARRAY = Utilities.getRange(1,1878);
+        ArrayList<String> IDS_ARRAY = Utilities.getRange(1,6);
         //ArrayList<String> IDS_ARRAY = new ArrayList<String>(Arrays.asList( new String[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o"} ));
 
 
         /*
          * The location and name of the file where the output will be printed.
          */
-        String OUT_FILE = Utilities.HOME_PATH+"/Dropbox/CF/snp_annotation/CF170/REVIEW/DDS15A1/snp_annot_atcc23344.txt";
+        String OUT_FILE = Utilities.HOME_PATH+"/Library/Mobile Documents/com~apple~CloudDocs/bio/magnet/sandbox/annot_pao1/snp_annot_sbw25.txt";
 
 
         process(VARIANT_FILE,MVIEW_FILE_PREFIX,MVIEW_FILE_SUFFIX,IDS_ARRAY,OUT_FILE);
@@ -564,8 +564,9 @@ public class SNPIdentityFromBlast {
         String key = fasta.keySet().iterator().next();
         String value = fasta.get(key);
         fasta.remove(key);
-
-        String[] curRefPos = key.split("\\s+")[6].split(":");
+        //String[] curRefPos = key.split("\\s+")[6].split(":");
+        //Next Line is for newest version of mview
+        String[] curRefPos = key.split("\\s+")[4].split(":");
         result.setRefStart( Integer.parseInt( curRefPos[0] ) );
         result.setRefStop( Integer.parseInt( curRefPos[1] ) );
         result.setRefNucleotide( value );
@@ -573,19 +574,22 @@ public class SNPIdentityFromBlast {
         for( String curKey : fasta.keySet() ){
             MViewHits curHit = new MViewHits();
             String[] curInfo = curKey.split("\\s+");
+            System.out.println(Arrays.toString(curInfo));
             curHit.setContig( curInfo[0] );
             curHit.setBitscore( Double.parseDouble( curInfo[1] ) );
             curHit.seteValue( Double.parseDouble( curInfo[2] ) );
             curHit.setRefStrand( curInfo[4].charAt(0) );
             curHit.setStrand( curInfo[5].charAt(0) );
-            String[] curInternalRefPos = curInfo[6].split(":");
+            String[] curInternalRefPos = curInfo[8].split(":");
             curHit.setRefStart( Integer.parseInt(curInternalRefPos[0]) );
             curHit.setRefStop( Integer.parseInt(curInternalRefPos[1]) );
-            String[] curPos = curInfo[7].split(":");
+            //String[] curPos = curInfo[7].split(":");
+            //Next Line is for newest version of mview
+            String[] curPos = curInfo[9].split(":");
             curHit.setStart( Integer.parseInt( curPos[0] ) );
             curHit.setStop( Integer.parseInt( curPos[1] ) );
             curHit.setNucleotide( fasta.get(curKey) );
-            /*System.out.println( curKey );
+            System.out.println( curKey );
             System.out.println("contig: "+curHit.getContig());
             System.out.println("bitscore: "+curHit.getBitscore());
             System.out.println("evalue: "+curHit.geteValue());
@@ -597,7 +601,7 @@ public class SNPIdentityFromBlast {
             System.out.println("stop: "+curHit.getStop());
             System.out.println("fasta array: "+fasta);
             System.out.println("nucleotide: "+fasta.get(curKey));
-            System.out.println("nucleotide: "+curHit.getNucleotide());*/
+            System.out.println("nucleotide: "+curHit.getNucleotide());
             hits.add(curHit);
         }
         result.setHits(hits);
