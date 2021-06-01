@@ -1,4 +1,3 @@
-<img src="DSG_doodle.png" width="400">
 # SNPCallingPipeline
 This is a SNP calling tool, which implements read mapping from three different algorithms ([BWA](http://bio-bwa.sourceforge.net), [LAST](http://last.cbrc.jp/doc/last.html) and [Novoalign](http://www.novocraft.com/products/novoalign/)) and evaluates their output. This pipeline currently is only suitable for bacterial genomes.
 
